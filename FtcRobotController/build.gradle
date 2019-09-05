@@ -18,6 +18,10 @@ android {
     }
 }
 
+dependencies {
+    implementation project(path: ':OpenCV')
+}
+
 repositories {
     flatDir {
         dirs '../libs'
