@@ -40,22 +40,7 @@ public class DriveCommand extends BioCommand {
     @Override
     public void loop() {
 
-        double brp = 0, frp = 0, blp = 0, flp = 0;
 
-        if (Math.abs(driver.left_stick_y) > 0.05) {
-            brp += driver.right_stick_y;
-            frp += driver.right_stick_y;
-        }
-
-        if (Math.abs(driver.right_stick_y) > 0.05) {
-            blp += driver.left_stick_y;
-            flp += driver.left_stick_y;
-        }
-
-        bright.setPower(brp);
-        fright.setPower(frp);
-        bleft.setPower(blp);
-        fleft.setPower(flp);
     }
 
     @Override
