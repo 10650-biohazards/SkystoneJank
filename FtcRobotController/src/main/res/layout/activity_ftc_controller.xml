@@ -152,7 +152,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             android:layout_weight="1"
             />
 
-        </LinearLayout>
+
+
+      </LinearLayout>
 
       <!-- When visible, the error message will overlay and thus partially
            obscure part of the camera monitor. We make this trade off so as to
@@ -220,6 +222,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           android:layout_gravity="end|bottom"
           android:onClick="frameButtonOnClick"/>
 
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:visibility="gone"
+          android:text="Show"
+          android:id="@+id/show"
+          android:layout_gravity="start|bottom"
+          android:onClick="showButtonOnClick"/>
+
+      <Button
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:visibility="visible"
+          android:text="Hide"
+          android:id="@+id/hide"
+          android:layout_gravity="start|bottom"
+          android:onClick="hideButtonOnClick"/>
+
       <TextView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -231,6 +251,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     </FrameLayout>
 
+    <!--
+    <ImageView
+        android:id="@+id/steve"
+        android:layout_width="410dp"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="260dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/white_box" />
+-->
   </RelativeLayout>
 
   <WebView

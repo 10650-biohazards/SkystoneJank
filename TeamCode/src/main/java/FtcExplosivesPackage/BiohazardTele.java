@@ -37,6 +37,8 @@ public abstract class BiohazardTele extends LinearOpMode {
         telemetry.addData("Initializing", "Finished");
         telemetry.update();
 
+        waitForStart();
+
 
         //FIRST LOOP
         telemetry.addData("First Loop", "Started");

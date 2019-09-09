@@ -56,7 +56,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupMenu;
@@ -143,11 +145,11 @@ public class FtcRobotControllerActivity extends Activity
 
     ////////////// START VISION PROCESSING CODE //////////////
 
-    static final int FRAME_WIDTH_REQUEST = 176;
-    static final int FRAME_HEIGHT_REQUEST = 144;
+    public static final int FRAME_WIDTH_REQUEST = 176;
+    public static final int FRAME_HEIGHT_REQUEST = 144;
 
     // Loads camera view of OpenCV for us to use. This lets us see using OpenCV
-    private CameraBridgeViewBase cameraBridgeViewBase;
+    static public CameraBridgeViewBase cameraBridgeViewBase;
 
     //manages getting one frame at a time
     public static FrameGrabber frameGrabber = null;
@@ -174,6 +176,22 @@ public class FtcRobotControllerActivity extends Activity
       }
       Object result = frameGrabber.getResult();
       ((TextView)findViewById(R.id.resultText)).setText(result.toString());
+    }
+
+    //when the "Hide" button is pressed
+    public void hideButtonOnClick(View v){
+      Button showButton = findViewById(R.id.show);
+      showButton.setVisibility(View.VISIBLE);
+      Button hideButton = findViewById(R.id.hide);
+      hideButton.setVisibility(View.INVISIBLE);
+    }
+
+    //when the "Show" button is pressed
+    public void showButtonOnClick(View v){
+      Button showButton = findViewById(R.id.show);
+      showButton.setVisibility(View.INVISIBLE);
+      Button hideButton = findViewById(R.id.hide);
+      hideButton.setVisibility(View.VISIBLE);
     }
 
   /*

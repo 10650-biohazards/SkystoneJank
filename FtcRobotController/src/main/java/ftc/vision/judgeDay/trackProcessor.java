@@ -86,7 +86,7 @@ public class trackProcessor implements ImageProcessor<trackResult> {
         Mat contTemp = maskedImage.clone();
         Imgproc.findContours(contTemp, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        //rgbaChannels.add(maskedImage.clone());
+        rgbaChannels.add(maskedImage.clone());
 
         /*
         for (int i = 0; i < 3; i++) {
