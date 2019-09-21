@@ -1,4 +1,4 @@
-package Competition.Commands;
+package Competition.Commands; /*
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.opencv.core.Point;
@@ -13,9 +13,10 @@ import ftc.vision.judgeDay.trackResult;
 
 public class VisionCommand extends BioCommand {
 
-    //public static Point intakeStoneLoc;
-    //public static double intakeStoneAng;
+    public static Point intakeStoneLoc;
+    public static double intakeStoneAng;
     public static stoneStatus status;
+
     stoneResult intakeResult;
 
     VufFrameGrabber intakeGrabber;
@@ -85,3 +86,4 @@ public class VisionCommand extends BioCommand {
         TILTLEFT
     }
 }
+*/

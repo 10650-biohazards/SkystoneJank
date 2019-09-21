@@ -1,4 +1,4 @@
-package Competition.Commands;
+/*package Competition.Commands;
 
 import android.util.Log;
 
@@ -74,3 +74,4 @@ public class MechCommand extends BioCommand {
 
     }
 }
+*/

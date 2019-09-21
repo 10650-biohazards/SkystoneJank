@@ -1,4 +1,4 @@
-package Competition.Programs.TeleOp;/*package Competition.Programs;
+package Competition.Programs.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -42,4 +42,3 @@ public class BasicTele extends BiohazardTele {
 
     }
 }
-*/
