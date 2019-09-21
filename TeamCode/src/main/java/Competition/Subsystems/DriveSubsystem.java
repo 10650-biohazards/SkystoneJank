@@ -20,7 +20,7 @@ public class DriveSubsystem extends BioSubsystem {
     LinearOpMode op;
     public BiohazardNavX gyro;
 
-    driveTracker2 track;
+    public driveTracker2 track;
 
     public DriveSubsystem(LinearOpMode op) {
         super(op);
@@ -66,16 +66,59 @@ public class DriveSubsystem extends BioSubsystem {
     }
     public void moveStraightPID(double targDist) {moveStraightPID(targDist, 3000);}
 
+    public void moveStraightRaw(double targDist) {
+
+        double target = bright.getCurrentPosition() + targDist;
+        double initDiff = targDist - bright.getCurrentPosition();
+
+        boolean forward = !(initDiff < 0);
+
+        boolean done = false;
+        while (!done) {
+            if (forward) {
+                setPows(1, 1, 1, 1);
+                done = bright.getCurrentPosition() > target;
+            } else
+
+            track.refresh();
+
+            if (!op.opModeIsActive()) return;
+        }
+        setPows(0, 0, 0, 0);
+        u.waitMS(200);
+    }
+
 
     public void moveTurnPID(double targetAng) {
-        PID movePID = new PID();
-        movePID.setup(0.1, 0, 0, 0.07, 0.25,targetAng);
+        double mod = 0;
 
-        u.startTimer(5000);
+        double curr = refine(gyro.getYaw());
+        if (Math.abs(targetAng - curr) > 180) {
+            if (curr > 180) {
+                mod = 360 - curr + 5;
+            } else {
+                mod = 360 - targetAng + 5;
+            }
+        }
+
+        PID movePID = new PID();
+        movePID.setup(0.1, 0, 0, 0.07, 0.25,refine(targetAng + mod));
+
+        u.startTimer(30000);
 
         while (!u.timerDone() && !movePID.done()) {
-            double power = movePID.status(gyro.getYaw());
+            double currAng = refine(gyro.getYaw() + mod);
+
+            double power = movePID.status(currAng);
             setPows(power, power, -power, -power);
+
+            op.telemetry.addData("mod", mod);
+            op.telemetry.addData("Power", power);
+            op.telemetry.addData("working", currAng);
+            op.telemetry.addData("refined", refine(gyro.getYaw()));
+            op.telemetry.addData("Raw Target", targetAng);
+            op.telemetry.addData("Modded Target", refine(targetAng + mod));
+            op.telemetry.update();
 
             track.refresh();
 
@@ -86,6 +129,8 @@ public class DriveSubsystem extends BioSubsystem {
     }
 
     public void swingTurnPID(double targetAng, boolean right) {
+        double mod = 0;
+
         PID breakPIDF = new PID();
         PID breakPIDB = new PID();
         breakPIDF.setup(0.05, 0, 0, 0, 0, 0);
@@ -99,19 +144,31 @@ public class DriveSubsystem extends BioSubsystem {
             breakPIDF.setTarget(fleft.getCurrentPosition());
         }
 
-        PID movePID = new PID();
-        movePID.setup(0.0002, 0, 0, 0.2, 20,targetAng);
+        double curr = refine(gyro.getYaw());
+        if (targetAng - curr < 0 && right) {
+            mod = 360 - curr + 5;
+        }
+        if (refine(gyro.getYaw()) - targetAng < 0 && !right) {
+            mod = 360 - targetAng + 5;
+        }
 
-        u.startTimer(5000);
+        PID movePID = new PID();
+        movePID.setup(0.1, 0, 0, 0.2, 0.2, refine(targetAng + mod));
+
+        u.startTimer(30000);
 
         while (!u.timerDone() && !movePID.done()) {
-            double currAng = gyro.getYaw();
-            if (currAng < 0) {
-                currAng += 360;
-            }
-
+            double currAng = refine(gyro.getYaw() + mod);
 
             double power = movePID.status(currAng);
+
+            op.telemetry.addData("mod", mod);
+            op.telemetry.addData("Power", power);
+            op.telemetry.addData("working", currAng);
+            op.telemetry.addData("refined", refine(gyro.getYaw()));
+            op.telemetry.addData("Raw Target", targetAng);
+            op.telemetry.addData("Modded Target", refine(targetAng + mod));
+            op.telemetry.update();
 
             setPows(power, power, -power, -power);
 
@@ -121,6 +178,14 @@ public class DriveSubsystem extends BioSubsystem {
         }
         setPows(0, 0, 0, 0);
         u.waitMS(200);
+    }
+
+    public double refine(double input) {
+        input %= 360;
+        if (input < 0) {
+            input =+ 360;
+        }
+        return input;
     }
 
 

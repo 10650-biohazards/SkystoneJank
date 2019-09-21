@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import FtcExplosivesPackage.BiohazardBNO055Gyro;
+import FtcExplosivesPackage.BiohazardTele;
 import FtcExplosivesPackage.ExplosiveAuto;
 import FtcExplosivesPackage.ExplosiveNavX;
 import FtcExplosivesPackage.ExplosiveTele;
@@ -35,6 +36,36 @@ public class GagarinRobot {
 
     public AnalogInput potent;
     public ModernRoboticsI2cRangeSensor ultra;
+
+    public GagarinRobot(BiohazardTele op) {
+        //this.op = op;
+
+        //intakeGyro = new BiohazardBNO055Gyro(op.hardwareMap, "imu");
+
+        bright = op.hardwareMap.get(DcMotor.class, "rightB");
+        fright = op.hardwareMap.get(DcMotor.class, "right");
+        bleft = op.hardwareMap.get(DcMotor.class, "leftB");
+        fleft = op.hardwareMap.get(DcMotor.class, "left");
+        liftMotor = op.hardwareMap.get(DcMotor.class, "actuator");
+        intakeMotor = op.hardwareMap.get(DcMotor.class,"intake");
+        slideMotor = op.hardwareMap.get(DcMotor.class, "Post-Progressive Jazz Funk");
+        rackMotor = op.hardwareMap.get(DcMotor.class, "ARMaan");
+
+        bright.setDirection(DcMotor.Direction.REVERSE);
+        fright.setDirection(DcMotor.Direction.REVERSE);
+
+        potent = op.hardwareMap.get(AnalogInput.class, "Diamond in the Rough");
+
+        markServo = op.hardwareMap.get(Servo.class, "drunkard servo");
+
+        lRotator = op.hardwareMap.get(Servo.class, "left rotator");
+        rRotator = op.hardwareMap.get(Servo.class, "right rotator");
+
+        gyro = new ExplosiveNavX(op, "41", 0);
+        ultra = op.hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "SONIC THE HEDGEHOG");
+
+        initSubsystems(op);
+    }
 
     public GagarinRobot(ExplosiveAuto op) {
         //this.op = op;

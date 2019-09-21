@@ -4,30 +4,25 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.RotatedRect;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import ftc.vision.ColorTesting.colorResult;
 import ftc.vision.ImageProcessor;
 import ftc.vision.ImageProcessorResult;
 import ftc.vision.ImageUtil;
 
-public class stoneProcessor implements ImageProcessor<stoneResult> {
-    private static final String TAG = "stoneProcessor";
+public class stackProcessor implements ImageProcessor<stackResult> {
+    String TAG = "Stack Processor";
 
+    public static Mat input;
 
-    
     @Override
-    public ImageProcessorResult<stoneResult> process(long startTime, Mat rgbaFrame, boolean saveImages) {
-
-        Point location;
-        double rectAngle;
-        
+    public ImageProcessorResult<stackResult> process(long startTime, Mat rgbaFrame, boolean saveImages) {
         if (saveImages) {
             ImageUtil.saveImage(TAG, rgbaFrame, Imgproc.COLOR_RGBA2BGR, "0_camera", startTime);
         }
@@ -47,35 +42,25 @@ public class stoneProcessor implements ImageProcessor<stoneResult> {
         hsvMin.add(new Scalar(10, 150, 100)); //yellow min
         hsvMax.add(new Scalar(29, 255, 255)); //yellow max
 
-        hsvMin.add(new Scalar(0, 0, 0)); //red min
-        hsvMax.add(new Scalar(0/2, 0, 0)); //red max
+        hsvMin.add(new Scalar(0, 0, 0)); //null min
+        hsvMax.add(new Scalar(0, 0, 0)); //null max
 
-        hsvMin.add(new Scalar(0, 0, 0)); //blue min
-        hsvMax.add(new Scalar(0, 0, 0)); //blue max
+        hsvMin.add(new Scalar(0, 0, 0)); //null min
+        hsvMax.add(new Scalar(0, 0, 0)); //null max
 
 
         List<Mat> rgbaChannels = new ArrayList<>();
 
-        //Keeps track of highest masses for left and right
-        double[] maxMass = {Double.MIN_VALUE, Double.MIN_VALUE};
-
-        //Keeps track of the index of the highest mass for lest and right
-        int[] maxMassIndex = {3, 3};
-
 
         Mat maskedImage;
-        Mat colSum = new Mat();
-        double mass;
-        int[] data = new int[3];
 
         //Core's additions
         Mat hierarchy = new Mat();
         List<MatOfPoint> contours = new ArrayList<>();
         //End
 
-
-
         for (int i = 0; i < 3; i++) {
+
             maskedImage = new Mat();
 
             //Applying HSV limits
@@ -89,41 +74,35 @@ public class stoneProcessor implements ImageProcessor<stoneResult> {
             rgbaChannels.add(maskedImage.clone());
         }
 
-
-
         //add empty alpha channels
         rgbaChannels.add(Mat.zeros(hsv.size(), CvType.CV_8UC1));
 
         Core.merge(rgbaChannels, rgbaFrame);
 
-        //Core's additions
-
-        double maxSize = Double.MIN_VALUE;
-        RotatedRect maxRect = null;
-
-        for (MatOfPoint currCont : contours) {
-            RotatedRect rotRect = Imgproc.minAreaRect(new MatOfPoint2f(currCont.toArray()));
-            double area = rotRect.size.height * rotRect.size.width;
-
-            if (area > maxSize) {
-                maxSize = area;
-                maxRect = rotRect;
+        Rect maxRect = null;
+        double maxArea = -1;
+        for (MatOfPoint contour : contours) {
+            Rect rect = Imgproc.boundingRect(contour);
+            Imgproc.rectangle(rgbaFrame, rect.bl(), rect.tr(), new Scalar(255, 255, 255), 3);
+            if (rect.area() > maxArea) {
+                maxRect = rect;
+                maxArea = rect.area();
             }
         }
 
+        int width = -1;
+        double xCoord = -1;
         if (maxRect != null) {
-            location = maxRect.center;
-            Imgproc.circle(rgbaFrame, maxRect.center, 2, new Scalar(255, 255, 255), 2);
-            rectAngle = maxRect.angle;
-        } else {
-            location = null;
-            rectAngle = Double.MAX_VALUE;
-
+            width = maxRect.width;
+            xCoord = maxRect.mid().x;
         }
-        //End
 
+        if (saveImages) {
+            ImageUtil.saveImage(TAG, rgbaFrame, Imgproc.COLOR_RGBA2BGR, "1_binary", startTime);
+        }
 
+        input = rgbaFrame.clone();
 
-        return new ImageProcessorResult<>(startTime, rgbaFrame, new stoneResult(location, rectAngle));
+        return new ImageProcessorResult<>(startTime, rgbaFrame, new stackResult(xCoord, width));
     }
 }

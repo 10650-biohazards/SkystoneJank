@@ -1,21 +1,19 @@
 package Competition.Programs.Autonomous;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
 
 import Competition.Robot;
 import Competition.RobotMap;
 import Competition.Subsystems.DriveSubsystem;
+import Competition.Subsystems.VisionSubsystem;
 import DubinsCurve.curveProcessor3;
-import DubinsCurve.myPoint;
 import FtcExplosivesPackage.ExplosiveAuto;
 
-@Autonomous (name = "Sample Auto")
-public class sampleAuto extends ExplosiveAuto {
+@Autonomous (name = "Red Skystone Only")
+public class Template extends ExplosiveAuto {
 
     DriveSubsystem drive;
-
+    VisionSubsystem vision;
     curveProcessor3 curve;
 
     @Override
@@ -24,10 +22,11 @@ public class sampleAuto extends ExplosiveAuto {
         Robot robot = new Robot(this);
         robot.enable();
 
-        Robot.track.setCurrentNode(0, 0, 90);
-        RobotMap.gyro.startAng = 5;
+        Robot.track.setCurrentNode(-1.5, -2.625, 0);
+        RobotMap.gyro.startAng = 90;
 
         drive = Robot.drive;
+        vision = Robot.vision;
 
         curve = new curveProcessor3(drive, telemetry, this);
     }
@@ -39,12 +38,7 @@ public class sampleAuto extends ExplosiveAuto {
 
     @Override
     public void body() throws InterruptedException {
-        drive.moveTurnPID(355);
 
-        //drive.straightToPoint(new myPoint(1, -2));
-        //drive.straightToPoint(new myPoint(0, 2));
-        //drive.straightToPoint(new myPoint(-1, 2));
-        //drive.straightToPoint(new myPoint(3, 3));
     }
 
     @Override

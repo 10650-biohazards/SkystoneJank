@@ -42,7 +42,7 @@ public class VufFrameGrabber implements CameraBridgeViewBase.CvCameraViewListene
     private Mat frame, blank, tmp1, tmp2;
 
     //logging tag
-    private static final String TAG = "FrameGrabber";
+    private static final String TAG = "VufFrameGrabber";
 
     private boolean resultReady = false;
 
@@ -73,8 +73,17 @@ public class VufFrameGrabber implements CameraBridgeViewBase.CvCameraViewListene
         this.imageProcessor = imageProcessor;
     }
 
-    public VufFrameGrabber(CameraBridgeViewBase cameraBridgeViewBase, int frameWidthRequest, int frameHeightRequest, WebcamName webcam) {
+    public VufFrameGrabber(CameraBridgeViewBase cameraBridgeViewBase, int frameWidthRequest, int frameHeightRequest) {
+        //cameraBridgeViewBase.setVisibility(SurfaceView.VISIBLE);
 
+        //cameraBridgeViewBase.setMinimumWidth(frameWidthRequest);
+        //cameraBridgeViewBase.setMinimumHeight(frameHeightRequest);
+        //cameraBridgeViewBase.setMaxFrameSize(frameWidthRequest, frameHeightRequest);
+        //cameraBridgeViewBase.setCvCameraViewListener(this);
+    }
+
+
+    public void initCamera(WebcamName webcam) {
         //Start Vuforia
         webcamName = webcam;
 
@@ -92,14 +101,6 @@ public class VufFrameGrabber implements CameraBridgeViewBase.CvCameraViewListene
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true); //enables RGB565 format for the image
         locale.setFrameQueueCapacity(1); //tells VuforiaLocalizer to only store one frame at a time
         //End Vuforia
-
-
-        cameraBridgeViewBase.setVisibility(SurfaceView.VISIBLE);
-
-        cameraBridgeViewBase.setMinimumWidth(frameWidthRequest);
-        cameraBridgeViewBase.setMinimumHeight(frameHeightRequest);
-        cameraBridgeViewBase.setMaxFrameSize(frameWidthRequest, frameHeightRequest);
-        cameraBridgeViewBase.setCvCameraViewListener(this);
     }
 
     private boolean isImageProcessorNull(){

@@ -40,6 +40,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.wifi.WifiManager;
@@ -56,7 +57,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -132,11 +132,18 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import ftc.vision.Beacon.BeaconProcessor;
+import ftc.vision.ColorTesting.colorProcessor;
 import ftc.vision.FrameGrabber;
+import ftc.vision.SkyStone.skyProcessor;
+import ftc.vision.SkyStone.stackProcessor;
+import ftc.vision.SkyStone.stoneProcessor;
+import ftc.vision.VufFrameGrabber;
 import ftc.vision.judgeDay.trackProcessor;
 
 @SuppressWarnings("WeakerAccess")
@@ -145,22 +152,30 @@ public class FtcRobotControllerActivity extends Activity
 
     ////////////// START VISION PROCESSING CODE //////////////
 
-    public static final int FRAME_WIDTH_REQUEST = 176;
-    public static final int FRAME_HEIGHT_REQUEST = 144;
+    static final int FRAME_WIDTH_REQUEST = 176;
+    static final int FRAME_HEIGHT_REQUEST = 144;
 
     // Loads camera view of OpenCV for us to use. This lets us see using OpenCV
-    static public CameraBridgeViewBase cameraBridgeViewBase;
+    private CameraBridgeViewBase cameraBridgeViewBase;
+
+
 
     //manages getting one frame at a time
     public static FrameGrabber frameGrabber = null;
+    //public static VufFrameGrabber vufFrameGrabber = null;
 
     //set up the frameGrabber
     void myOnCreate(){
+      cameraBridgeViewBase = (JavaCameraView) findViewById(R.id.show_camera_activity_java_surface_view);
+      //vufFrameGrabber = new VufFrameGrabber(cameraBridgeViewBase, FRAME_WIDTH_REQUEST, FRAME_HEIGHT_REQUEST);
+      //vufFrameGrabber.setImageProcessor(new colorProcessor());
+      //vufFrameGrabber.setSaveImages(false);
+
       getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
       cameraBridgeViewBase = (JavaCameraView) findViewById(R.id.show_camera_activity_java_surface_view);
       frameGrabber = new FrameGrabber(cameraBridgeViewBase, FRAME_WIDTH_REQUEST, FRAME_HEIGHT_REQUEST);
-      frameGrabber.setImageProcessor(new trackProcessor());
+      frameGrabber.setImageProcessor(new stackProcessor());
       frameGrabber.setSaveImages(false);
     }
 
@@ -176,22 +191,7 @@ public class FtcRobotControllerActivity extends Activity
       }
       Object result = frameGrabber.getResult();
       ((TextView)findViewById(R.id.resultText)).setText(result.toString());
-    }
-
-    //when the "Hide" button is pressed
-    public void hideButtonOnClick(View v){
-      Button showButton = findViewById(R.id.show);
-      showButton.setVisibility(View.VISIBLE);
-      Button hideButton = findViewById(R.id.hide);
-      hideButton.setVisibility(View.INVISIBLE);
-    }
-
-    //when the "Show" button is pressed
-    public void showButtonOnClick(View v){
-      Button showButton = findViewById(R.id.show);
-      showButton.setVisibility(View.INVISIBLE);
-      Button hideButton = findViewById(R.id.hide);
-      hideButton.setVisibility(View.VISIBLE);
+      findViewById(R.id.bacon).setVisibility(View.INVISIBLE);
     }
 
   /*
@@ -318,7 +318,17 @@ public class FtcRobotControllerActivity extends Activity
 
   private WifiDirectChannelChanger wifiDirectChannelChanger;
 
-  protected class RobotRestarter implements Restarter {
+    public void vufButtonOnClick(View view) {
+
+      findViewById(R.id.bacon).setVisibility(View.VISIBLE);
+
+      Bitmap bm = Bitmap.createBitmap(800, 448, Bitmap.Config.RGB_565);
+      Utils.matToBitmap(stackProcessor.input, bm);
+
+      ((ImageView)findViewById(R.id.bacon)).setImageBitmap(bm);
+    }
+
+    protected class RobotRestarter implements Restarter {
 
     public void requestRestart() {
       requestRobotRestart();

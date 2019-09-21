@@ -1,4 +1,4 @@
-package Competition.Programs.TeleOp;/*package Competition.Programs;
+package Competition.Programs.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,6 +16,7 @@ public class BasicTele extends BiohazardTele {
     public void initHardware() {
         RobotMap robotMap = new RobotMap(hardwareMap);
         Robot robot = new Robot(this);
+        robot.enable();
 
         drive = new DriveCommand(this);
 
@@ -34,7 +35,9 @@ public class BasicTele extends BiohazardTele {
 
     @Override
     public void bodyLoop() {
-
+        telemetry.addData("left  y", Robot.driver.left_stick_y);
+        telemetry.addData("right y", Robot.driver.right_stick_y);
+        telemetry.update();
     }
 
     @Override
@@ -42,4 +45,3 @@ public class BasicTele extends BiohazardTele {
 
     }
 }
-*/

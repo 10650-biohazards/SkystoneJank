@@ -21,11 +21,13 @@ import ftc.vision.ImageUtil;
 public class skyProcessor implements ImageProcessor<skyResult> {
     private static final String TAG = "stoneProcessor";
 
+    public static Mat input;
+
     @Override
     public ImageProcessorResult<skyResult> process(long startTime, Mat rgbaFrame, boolean saveImages) {
 
-        int yMax = 42, yMin = 84;
-        int startX = 42, stoneWidth = 42, buffer = 42;
+        int yMax = 140, yMin = 194;
+        int startX = 0, stoneWidth = 170, buffer = 60;
 
         ArrayList<Rect> slots = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -42,17 +44,28 @@ public class skyProcessor implements ImageProcessor<skyResult> {
 
         //convert to hsv
         Mat hsv = new Mat();
-        Imgproc.line(rgbaFrame, new Point(startX + stoneWidth,0 ), new Point(startX + stoneWidth, 144), new Scalar(0, 0, 0), 3);
-        Imgproc.line(rgbaFrame, new Point(startX + (stoneWidth * 2),0 ), new Point(startX + (stoneWidth * 2), 144), new Scalar(0, 0, 0), 3);
-        Imgproc.line(rgbaFrame, new Point(startX + (stoneWidth * 3),0 ), new Point(startX + (stoneWidth * 3), 144), new Scalar(0, 0, 0), 3);
+        Imgproc.line(rgbaFrame, new Point(startX + stoneWidth,0 ), new Point(startX + stoneWidth, rgbaFrame.height()), new Scalar(0, 0, 0), 70);
+        Imgproc.line(rgbaFrame, new Point(startX + (stoneWidth * 2),0 ), new Point(startX + (stoneWidth * 2), rgbaFrame.height()), new Scalar(0, 0, 0), 70);
+        Imgproc.line(rgbaFrame, new Point(startX + (stoneWidth * 3),0 ), new Point(startX + (stoneWidth * 3), rgbaFrame.height()), new Scalar(0, 0, 0), 70);
+        Imgproc.rectangle(rgbaFrame, new Point(0,yMin + 10), new Point(rgbaFrame.width(), yMin + 20), new Scalar(0, 0, 0), -1);
         Imgproc.cvtColor(rgbaFrame, hsv, Imgproc.COLOR_RGB2HSV);
 
         //h range is 0-179
         //s range is 0-255
         //v range is 0-255
 
-        Scalar yellowMin = new Scalar(150, 50, 150);
-        Scalar yellowMax = new Scalar(179, 255, 255);
+        //values stored as list of minimum and maximum hsv values, red then green then blue
+        List<Scalar> hsvMin = new ArrayList<>();
+        List<Scalar> hsvMax = new ArrayList<>();
+
+        hsvMin.add(new Scalar(10, 150, 100)); //yellow min
+        hsvMax.add(new Scalar(29, 255, 255)); //yellow max
+
+        hsvMin.add(new Scalar(0, 0, 0)); //red min
+        hsvMax.add(new Scalar(0/2, 0, 0)); //red max
+
+        hsvMin.add(new Scalar(0, 0, 0)); //blue min
+        hsvMax.add(new Scalar(0, 0, 0)); //blue max
 
 
         List<Mat> rgbaChannels = new ArrayList<>();
@@ -75,15 +88,19 @@ public class skyProcessor implements ImageProcessor<skyResult> {
         //End
 
 
+        for (int i = 0; i < 3; i++) {
+            maskedImage = new Mat();
 
-        maskedImage = new Mat();
-        ImageUtil.hsvInRange(hsv, yellowMin, yellowMax, maskedImage);
+            //Applying HSV limits
+            ImageUtil.hsvInRange(hsv, hsvMin.get(i), hsvMax.get(i), maskedImage);
 
-        Mat contTemp = maskedImage.clone();
-        Imgproc.findContours(contTemp, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+            //Start Core's additions
+            Mat contTemp = maskedImage.clone();
+            Imgproc.findContours(contTemp, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+            //End Core's addition
 
-        rgbaChannels.add(maskedImage.clone());
-
+            rgbaChannels.add(maskedImage.clone());
+        }
 
 
         //add empty alpha channels
@@ -95,12 +112,17 @@ public class skyProcessor implements ImageProcessor<skyResult> {
         ArrayList<Rect> stones = new ArrayList<>();
         for (MatOfPoint currCont : contours) {
             Rect rect = Imgproc.boundingRect(currCont);
-            if (rect.area() > 40) {
+            if (rect.area() > 200) {
+                Imgproc.rectangle(rgbaFrame, rect.bl(), rect.tr(), new Scalar(0, 255, 0), 3);
+                Imgproc.rectangle(rgbaFrame, new Point(rect.mid().x + 2, rect.mid().y + 2), new Point(rect.mid().x - 2, rect.mid().y - 2), new Scalar(255, 255, 255), 3);
                 stones.add(rect);
             }
         }
 
         boolean[] stonePresent = {false, false, false};
+        for (Rect slot :slots) {
+            Imgproc.rectangle(rgbaFrame, slot.bl(), slot.tr(), new Scalar(0, 0, 255), 3);
+        }
         for (Rect currRect : stones) {
             for (int i = 0; i < 3; i++) {
                 if (slots.get(i).contains(currRect.mid())) {
@@ -117,7 +139,7 @@ public class skyProcessor implements ImageProcessor<skyResult> {
         }
 
 
-
+        input = rgbaFrame.clone();
 
         return new ImageProcessorResult<>(startTime, rgbaFrame, new skyResult(result));
     }
