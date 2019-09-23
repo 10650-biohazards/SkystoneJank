@@ -42,6 +42,7 @@ public class MechCommand extends BioCommand {
 
         manip = Robot.manipulator;
         driver = Robot.driver;
+
     }
 
     @Override
@@ -52,10 +53,14 @@ public class MechCommand extends BioCommand {
 
     @Override
     public void loop() {
+
         intake();
-        if (driver.a) {
+        if (driver.b) {
             autoStack();
         }
+
+        hooker();
+
     }
 
     public void autoStack() {
@@ -92,6 +97,18 @@ public class MechCommand extends BioCommand {
             intLeft.setPower(0.5);
             intRight.setPower(1);
         }
+    }
+
+    public void hooker (){
+
+        if (driver.dpad_down) {
+            hooker.setPosition(1);
+        }
+
+        if (driver.dpad_up) {
+            hooker.setPosition(0);
+        }
+
     }
 
     @Override

@@ -86,14 +86,14 @@ public class DriveCommand extends BioCommand {
         if(isFieldOrientedControl){
 
             ToxinFieldBasedControl.Point leftStick = ToxinFieldBasedControl.getLeftJoystick(driver, gyro);
-            sidePower = (float)leftStick.x;
-            straightPower = (float)leftStick.y;
-            turnPower = driver.right_stick_x;
+            sidePower = -(float)leftStick.x;
+            straightPower = -(float)leftStick.y;
+            turnPower = -driver.right_stick_x;
 
         } else {
-            sidePower = driver.left_stick_x;
-            straightPower = driver.left_stick_y;
-            turnPower = driver.right_stick_x;
+            sidePower = -driver.left_stick_x;
+            straightPower = -driver.left_stick_y;
+            turnPower = -driver.right_stick_x;
         }
 
         if (driver.x && buffer && !slowPower){
@@ -130,17 +130,17 @@ public class DriveCommand extends BioCommand {
             turnPower /= 5;
         }
 
-        frightPower = +sidePower + straightPower + turnPower;
         brightPower = -sidePower + straightPower + turnPower;
+        frightPower = +sidePower + straightPower + turnPower;
         bleftPower  = +sidePower + straightPower - turnPower;
         fleftPower  = -sidePower + straightPower - turnPower;
 
         //finds the greatest number than finds the scale factor to make that equal to one.
         float scaleAdjust = ScaleAdjustment(frightPower, brightPower, bleftPower, fleftPower, 1);
+        brightPower *= scaleAdjust;
         frightPower *= scaleAdjust;
-        brightPower *= scaleAdjust;
+        bleftPower *= scaleAdjust;
         fleftPower  *= scaleAdjust;
-        brightPower *= scaleAdjust;
 
         //deadband system is set to 0.05
         if(Math.abs(straightPower) > DEADBAND || Math.abs(sidePower) > DEADBAND || Math.abs(turnPower) > DEADBAND) {
@@ -160,6 +160,10 @@ public class DriveCommand extends BioCommand {
         op.telemetry.addData("turn", turnPower);
         op.telemetry.addData("slow down", slowPower);
         op.telemetry.addData("Field Oriented", isFieldOrientedControl);
+        op.telemetry.addData("bright", bright.getCurrentPosition());
+        op.telemetry.addData("fright", fright.getCurrentPosition());
+        op.telemetry.addData("bleft", bleft.getCurrentPosition());
+        op.telemetry.addData("fleft", fleft.getCurrentPosition());
         op.telemetry.update();
 
         }
