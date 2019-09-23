@@ -84,10 +84,12 @@ public class DriveCommand extends BioCommand {
         buffer = System.currentTimeMillis() > resetTime + 200;
 
         if(isFieldOrientedControl){
+
             ToxinFieldBasedControl.Point leftStick = ToxinFieldBasedControl.getLeftJoystick(driver, gyro);
             sidePower = (float)leftStick.x;
             straightPower = (float)leftStick.y;
             turnPower = driver.right_stick_x;
+
         } else {
             sidePower = driver.left_stick_x;
             straightPower = driver.left_stick_y;
@@ -143,17 +145,12 @@ public class DriveCommand extends BioCommand {
         //deadband system is set to 0.05
         if(Math.abs(straightPower) > DEADBAND || Math.abs(sidePower) > DEADBAND || Math.abs(turnPower) > DEADBAND) {
 
-            fright.setPower(frightPower);
-            bright.setPower(brightPower);
-            bleft.setPower(bleftPower);
-            fleft.setPower(fleftPower);
+            setPows(brightPower, frightPower, bleftPower, fleftPower);
+
 
         } else {
 
-            fright.setPower(0);
-            bright.setPower(0);
-            bleft.setPower(0);
-            fleft.setPower(0);
+            setPows(0,0,0,0);
 
         }
 
@@ -164,6 +161,7 @@ public class DriveCommand extends BioCommand {
         op.telemetry.addData("slow down", slowPower);
         op.telemetry.addData("Field Oriented", isFieldOrientedControl);
         op.telemetry.update();
+
         }
 
 

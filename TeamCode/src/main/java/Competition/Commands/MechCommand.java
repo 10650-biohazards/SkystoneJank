@@ -1,4 +1,4 @@
-/*package Competition.Commands;
+package Competition.Commands;
 
 import android.util.Log;
 
@@ -10,6 +10,11 @@ import Competition.Robot;
 import Competition.RobotMap;
 import FtcExplosivesPackage.BioCommand;
 import FtcExplosivesPackage.BiohazardTele;
+
+import static Competition.Commands.VisionCommand.stoneStatus.NONE;
+import static Competition.Commands.VisionCommand.stoneStatus.ONTARGET;
+import static Competition.Commands.VisionCommand.stoneStatus.TILTLEFT;
+import static Competition.Commands.VisionCommand.stoneStatus.TILTRIGHT;
 
 
 public class MechCommand extends BioCommand {
@@ -66,7 +71,7 @@ public class MechCommand extends BioCommand {
     }
 
     public void intake() {
-        /*
+
         if (VisionCommand.status == NONE) {
             Log.e(TAG, "No stone in sight");
             intLeft.setPower(0);
@@ -86,7 +91,7 @@ public class MechCommand extends BioCommand {
             Log.e(TAG, "Off course! Tilted to the left!");
             intLeft.setPower(0.5);
             intRight.setPower(1);
-        }*/
+        }
     }
 
     @Override
@@ -94,4 +99,3 @@ public class MechCommand extends BioCommand {
 
     }
 }
-*/
