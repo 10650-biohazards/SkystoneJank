@@ -11,7 +11,7 @@ import DubinsCurve.curveProcessor3;
 import DubinsCurve.myPoint;
 import FtcExplosivesPackage.ExplosiveAuto;
 
-@Autonomous (name = "Red Skystone Only", group = "Red")
+@Autonomous (name = "Red Skystone Only", group = "red")
 public class RedSkyOnly extends ExplosiveAuto {
 
     DriveSubsystem drive;

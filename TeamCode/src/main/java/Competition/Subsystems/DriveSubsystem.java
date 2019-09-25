@@ -62,9 +62,27 @@ public class DriveSubsystem extends BioSubsystem {
             if (!op.opModeIsActive()) return;
         }
         setPows(0, 0, 0, 0);
-        u.waitMS(200);
+        u.waitMS(500);
     }
     public void moveStraightPID(double targDist) {moveStraightPID(targDist, 3000);}
+
+    public void moveStrafePID(double targDist, int stopTime) {
+        PID movePID = new PID();
+        movePID.setup(0.0002, 0, 0, 0.2, 20,bright.getCurrentPosition() + targDist);
+
+        u.startTimer(stopTime);
+
+        while (!u.timerDone() && !movePID.done()) {
+            double power = movePID.status(bright.getCurrentPosition());
+            setPows(power, -power, -power, power);
+
+            track.refresh();
+
+            if (!op.opModeIsActive()) return;
+        }
+        setPows(0, 0, 0, 0);
+        u.waitMS(500);
+    }
 
     public void moveStraightRaw(double targDist) {
 
@@ -102,15 +120,25 @@ public class DriveSubsystem extends BioSubsystem {
         }
 
         PID movePID = new PID();
-        movePID.setup(0.1, 0, 0, 0.07, 0.25,refine(targetAng + mod));
+        movePID.setup(0.05, 0, 0, 0.07, 0.25,refine(targetAng + mod));
 
-        u.startTimer(30000);
+        op.telemetry.addData("mod", mod);
+        op.telemetry.addData("raw ang", gyro.getYaw());
+        op.telemetry.addData("refined", refine(gyro.getYaw()));
+        op.telemetry.addData("Raw Target", targetAng);
+        op.telemetry.addData("modded ang", refine(gyro.getYaw() + mod));
+        op.telemetry.addData("Modded Target", refine(targetAng + mod));
+        op.telemetry.update();
+
+        //u.waitMS(10000);
+
+        u.startTimer(5000);
 
         while (!u.timerDone() && !movePID.done()) {
             double currAng = refine(gyro.getYaw() + mod);
 
             double power = movePID.status(currAng);
-            setPows(power, power, -power, -power);
+            setPows(-power, -power, power, power);
 
             op.telemetry.addData("mod", mod);
             op.telemetry.addData("Power", power);

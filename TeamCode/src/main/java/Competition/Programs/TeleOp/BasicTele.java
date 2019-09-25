@@ -35,9 +35,7 @@ public class BasicTele extends BiohazardTele {
 
     @Override
     public void bodyLoop() {
-        telemetry.addData("left  y", Robot.driver.left_stick_y);
-        telemetry.addData("right y", Robot.driver.right_stick_y);
-        telemetry.update();
+
     }
 
     @Override

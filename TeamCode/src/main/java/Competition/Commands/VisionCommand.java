@@ -13,12 +13,15 @@ import org.firstinspires.ftc.teamcode.R;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+import Competition.Robot;
 import Competition.RobotMap;
 import FtcExplosivesPackage.BioCommand;
 import FtcExplosivesPackage.BiohazardTele;
 import ftc.vision.ColorTesting.colorProcessor;
+import ftc.vision.FrameGrabber;
 import ftc.vision.ImageProcessorResult;
 import ftc.vision.SkyStone.stackResult;
+import ftc.vision.SkyStone.stoneProcessor;
 import ftc.vision.SkyStone.stoneResult;
 import ftc.vision.VufFrameGrabber;
 
@@ -30,6 +33,8 @@ public class VisionCommand extends BioCommand {
     public static int stackWid;
     stoneResult intakeResult;
     stackResult stackResult;
+
+    FrameGrabber grabber;
 
     VufFrameGrabber intakeGrabber;
 
@@ -52,10 +57,12 @@ public class VisionCommand extends BioCommand {
                 "MilJpCGa5hzioMAGmDnYA8kqmcVAuu10ps4ZsFGBJkR7B";
         params.cameraName = RobotMap.stoneCam;
 
-
         this.locale = ClassFactory.getInstance().createVuforia(params);
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true); //enables RGB565 format for the image
         locale.setFrameQueueCapacity(1); //tells VuforiaLocalizer to only store one frame at a time
+
+
+        grabber.setImageProcessor(new stoneProcessor());
     }
 
     @Override
@@ -66,7 +73,9 @@ public class VisionCommand extends BioCommand {
     @Override
     public void loop() {
         intakeVision();
-        stackVision();
+        if (Robot.driver.a) {
+            stackVision();
+        }
     }
 
     public void stackVision() {
@@ -88,10 +97,23 @@ public class VisionCommand extends BioCommand {
     }
 
     public void intakeVision() {
-        processVuforia();
+        grabber.grabSingleFrame();
+        while (!grabber.isResultReady());
+
+        ImageProcessorResult imageProcessorResult = grabber.getResult();
+
+        intakeResult = (stoneResult) imageProcessorResult.getResult();
 
         if (intakeResult.centerPoint != null) {
             double stoneAng = intakeResult.rotation;
+
+            boolean longwise = intakeResult.rect.boundingRect().height < intakeResult.rect.boundingRect().width;
+
+            if (longwise) {
+
+            } else {
+
+            }
 
             if (Math.abs(stoneAng) < 5) {
                 status = stoneStatus.ONTARGET;
@@ -135,7 +157,7 @@ public class VisionCommand extends BioCommand {
         }
 
         ImageProcessorResult imageProcessorResult = processor.process(0, mat, false);
-        intakeResult = (stoneResult) imageProcessorResult.getResult();
+        stackResult = (stackResult) imageProcessorResult.getResult();
     }
 
     @Override

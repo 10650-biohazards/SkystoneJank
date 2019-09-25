@@ -25,15 +25,15 @@ public class HookSubsystem extends Subsystem {
     }
 
     public void hook() {
-        hooker.setPosition(1);
+        hooker.setPosition(0.5);
     }
 
     public void release() {
-        hooker.setPosition(0);
+        hooker.setPosition(1);
     }
 
     @Override
     public void stop() {
-
+        release();
     }
 }

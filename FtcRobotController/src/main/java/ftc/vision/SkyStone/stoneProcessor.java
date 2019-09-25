@@ -124,6 +124,6 @@ public class stoneProcessor implements ImageProcessor<stoneResult> {
 
 
 
-        return new ImageProcessorResult<>(startTime, rgbaFrame, new stoneResult(location, rectAngle));
+        return new ImageProcessorResult<>(startTime, rgbaFrame, new stoneResult(location, rectAngle, maxRect));
     }
 }

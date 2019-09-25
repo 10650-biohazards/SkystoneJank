@@ -10,8 +10,9 @@ import Competition.Subsystems.VisionSubsystem;
 import DubinsCurve.curveProcessor3;
 import DubinsCurve.myPoint;
 import FtcExplosivesPackage.ExplosiveAuto;
+import Utilities.Utility;
 
-@Autonomous (name = "Blue Foundation Only")
+@Autonomous (name = "Blue Foundation Only", group = "blue")
 public class BlueFoundationOnly extends ExplosiveAuto {
 
     DriveSubsystem drive;
@@ -19,13 +20,15 @@ public class BlueFoundationOnly extends ExplosiveAuto {
     HookSubsystem hooker;
     curveProcessor3 curve;
 
+    Utility u = new Utility(this);
+
     @Override
     public void initHardware() {
         RobotMap robotMap = new RobotMap(hardwareMap);
         Robot robot = new Robot(this);
         robot.enable();
 
-        Robot.track.setCurrentNode(-1, -3, 180);
+        Robot.track.setCurrentNode(-1, -3, 90);
         RobotMap.gyro.startAng = 90;
 
         drive = Robot.drive;
@@ -42,11 +45,17 @@ public class BlueFoundationOnly extends ExplosiveAuto {
 
     @Override
     public void body() throws InterruptedException {
-        drive.moveStraightPID(2000);
+        drive.moveStrafePID(-6000, 5000);
         hooker.hook();
-        drive.moveStraightPID(-1500);
+        u.waitMS(1000);
+        drive.moveStrafePID(8000, 5000);
         hooker.release();
-        drive.straightToPoint(new myPoint(0, -2.5));
+        drive.moveStraightPID(5000);
+        drive.moveTurnPID(10);
+        drive.moveStraightPID(3000);
+        drive.moveTurnPID(270);
+        drive.moveStraightPID(4000);
+        drive.moveStraightPID(-3000);
     }
 
     @Override
