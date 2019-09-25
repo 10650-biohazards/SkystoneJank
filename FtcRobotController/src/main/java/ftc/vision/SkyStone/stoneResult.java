@@ -1,6 +1,8 @@
 package ftc.vision.SkyStone;
 
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 
 public class stoneResult {
 
@@ -8,9 +10,12 @@ public class stoneResult {
 
     public double rotation;
 
-    public stoneResult(Point screenLoc, double rotation) {
+    public RotatedRect rect;
+
+    public stoneResult(Point screenLoc, double rotation, RotatedRect rect) {
         this.centerPoint = screenLoc;
         this.rotation = rotation;
+        this.rect = rect;
     }
 
     @Override

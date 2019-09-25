@@ -10,16 +10,18 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import FtcExplosivesPackage.BiohazardNavX;
 
 public class RobotMap {
-    public static DcMotor bright, fright, bleft, fleft, intLeft, intRight;
+    public static DcMotor bright, fright, bleft, fleft, intLeft, intRight, lift, rotator;
     public static Servo gripper, swinger, hooker;
     public static BiohazardNavX gyro;
     public static WebcamName stoneCam;
 
     public RobotMap(HardwareMap hw) {
-        bright = hw.get(DcMotor.class, "bright");
-        fright = hw.get(DcMotor.class, "fright");
-        bleft = hw.get(DcMotor.class, "bleft");
-        fleft = hw.get(DcMotor.class, "fleft");
+        bright  = hw.get(DcMotor.class, "bright");
+        fright  = hw.get(DcMotor.class, "fright");
+        bleft   = hw.get(DcMotor.class, "bleft");
+        fleft   = hw.get(DcMotor.class, "fleft");
+        lift    = hw.get(DcMotor.class, "lift");
+        rotator = hw.get(DcMotor.class, "rotator");
 
         bright.setDirection(DcMotorSimple.Direction.REVERSE);
         fright.setDirection(DcMotorSimple.Direction.REVERSE);

@@ -42,7 +42,6 @@ public class MechCommand extends BioCommand {
 
         manip = Robot.manipulator;
         driver = Robot.driver;
-
     }
 
     @Override
@@ -53,7 +52,6 @@ public class MechCommand extends BioCommand {
 
     @Override
     public void loop() {
-
         intake();
         if (driver.b) {
             autoStack();

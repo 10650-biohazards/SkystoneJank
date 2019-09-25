@@ -26,7 +26,7 @@ public class curveProcessor3 {
     private double xDiff;
     private double yDiff;
 
-    private final int TIICKSPERTILE = 1075;
+    private final int TIICKSPERTILE = 4071;
 
     private double lastTrackDist;
 

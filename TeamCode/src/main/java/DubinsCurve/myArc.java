@@ -2,7 +2,7 @@ package DubinsCurve;
 
 public class myArc {
 
-    public static final double RADIUS = 0.552;
+    public static final double RADIUS = 0.5520833333;
     Node startNode;
     public double length;
     public boolean right;

@@ -13,7 +13,7 @@ public class driveTracker2 {
 
     public double deltaEnc;
 
-    private final int TIICKSPERTILE = 1075;
+    private final int TIICKSPERTILE = 4071;
 
 
 
