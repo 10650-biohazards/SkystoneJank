@@ -3,6 +3,7 @@ package Competition.Programs.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import Competition.Commands.DriveCommand;
+import Competition.Commands.VisionCommand;
 import Competition.Robot;
 import Competition.RobotMap;
 import FtcExplosivesPackage.BiohazardTele;
@@ -11,6 +12,7 @@ import FtcExplosivesPackage.BiohazardTele;
 public class BasicTele extends BiohazardTele {
 
     DriveCommand drive;
+    VisionCommand vision;
 
     @Override
     public void initHardware() {
@@ -19,8 +21,10 @@ public class BasicTele extends BiohazardTele {
         robot.enable();
 
         drive = new DriveCommand(this);
+        vision = new VisionCommand(this);
 
         drive.enable();
+        vision.enable();
     }
 
     @Override

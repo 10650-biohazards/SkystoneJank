@@ -8,6 +8,7 @@ import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.R;
 import org.opencv.android.Utils;
@@ -42,8 +43,13 @@ public class VisionCommand extends BioCommand {
 
     colorProcessor processor;
 
+    VuforiaLocalizer.CloseableFrame frame = null; //takes the frame at the head of the queue
+
+    BiohazardTele op;
+
     public VisionCommand(BiohazardTele op) {
         super(op, "vision");
+        this.op = op;
     }
 
     @Override
@@ -55,7 +61,7 @@ public class VisionCommand extends BioCommand {
                 "di1CuP6A8Zjhs0/Z4Fz/tw0LyT0XLLKcnoVRqBkkln9jQeZAWMgnzfDCQOJRAGqz2y2" +
                 "t0yuHqouG2UhMDo42/z/xNLNqtCjvtLohcG4wkE5lOTdYZKt5BDHifAyuf3GQQzk1aR" +
                 "MilJpCGa5hzioMAGmDnYA8kqmcVAuu10ps4ZsFGBJkR7B";
-        params.cameraName = RobotMap.stoneCam;
+        params.cameraName = op.hardwareMap.get(WebcamName.class, "stoned cam");
 
         this.locale = ClassFactory.getInstance().createVuforia(params);
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true); //enables RGB565 format for the image
@@ -63,6 +69,23 @@ public class VisionCommand extends BioCommand {
 
 
         grabber.setImageProcessor(new stoneProcessor());
+
+        try {
+            frame = locale.getFrameQueue().take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Image rgb = null;
+
+        long numImages = frame.getNumImages();
+
+
+        for (int i = 0; i < numImages; i++) {
+            if (frame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
+                rgb = frame.getImage(i);
+                break;
+            }//if
+        }//for
     }
 
     @Override

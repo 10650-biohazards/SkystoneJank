@@ -21,6 +21,8 @@ public class DriveCommand extends BioCommand {
 
     private Gamepad driver;
 
+    boolean first = true;
+
     Utility u;
 
     PID turnPID = new PID();
@@ -80,6 +82,17 @@ public class DriveCommand extends BioCommand {
 
     @Override
     public void loop() {
+
+
+        if (driver.a) {
+            if (first) {
+                u.waitMS(100);
+                first = false;
+            }
+            autoStack();
+        } else {
+            first = true;
+        }
 
         if (driver.b) {
 
@@ -167,7 +180,7 @@ public class DriveCommand extends BioCommand {
         op.telemetry.addData("slow down", slowPower);
         op.telemetry.addData("Field Oriented", isFieldOrientedControl);
         op.telemetry.update();
-        }
+    }
 
 
     private void autoStack() {
