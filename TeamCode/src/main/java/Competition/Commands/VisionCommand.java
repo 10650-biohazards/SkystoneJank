@@ -7,8 +7,8 @@ import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 
+import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.R;
 import org.opencv.android.Utils;
@@ -18,9 +18,11 @@ import Competition.Robot;
 import Competition.RobotMap;
 import FtcExplosivesPackage.BioCommand;
 import FtcExplosivesPackage.BiohazardTele;
+import Utilities.Utility;
 import ftc.vision.ColorTesting.colorProcessor;
 import ftc.vision.FrameGrabber;
 import ftc.vision.ImageProcessorResult;
+import ftc.vision.SkyStone.stackProcessor;
 import ftc.vision.SkyStone.stackResult;
 import ftc.vision.SkyStone.stoneProcessor;
 import ftc.vision.SkyStone.stoneResult;
@@ -33,22 +35,24 @@ public class VisionCommand extends BioCommand {
     public static double stackX;
     public static int stackWid;
     stoneResult intakeResult;
-    stackResult stackResult;
 
     FrameGrabber grabber;
 
     VufFrameGrabber intakeGrabber;
 
     VuforiaLocalizer locale;
-
-    colorProcessor processor;
-
     VuforiaLocalizer.CloseableFrame frame = null; //takes the frame at the head of the queue
+
+    stackProcessor processor;
+    Utility u;
 
     BiohazardTele op;
 
+    Mat mat;
+
     public VisionCommand(BiohazardTele op) {
         super(op, "vision");
+        //u = new Utility(op);
         this.op = op;
     }
 
@@ -61,14 +65,15 @@ public class VisionCommand extends BioCommand {
                 "di1CuP6A8Zjhs0/Z4Fz/tw0LyT0XLLKcnoVRqBkkln9jQeZAWMgnzfDCQOJRAGqz2y2" +
                 "t0yuHqouG2UhMDo42/z/xNLNqtCjvtLohcG4wkE5lOTdYZKt5BDHifAyuf3GQQzk1aR" +
                 "MilJpCGa5hzioMAGmDnYA8kqmcVAuu10ps4ZsFGBJkR7B";
-        params.cameraName = op.hardwareMap.get(WebcamName.class, "stoned cam");
+        params.cameraName = RobotMap.stoneCam;
 
         this.locale = ClassFactory.getInstance().createVuforia(params);
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true); //enables RGB565 format for the image
         locale.setFrameQueueCapacity(1); //tells VuforiaLocalizer to only store one frame at a time
 
 
-        grabber.setImageProcessor(new stoneProcessor());
+        /*To access the image: you need to iterate through the images of the frame object:*/
+
 
         try {
             frame = locale.getFrameQueue().take();
@@ -80,12 +85,30 @@ public class VisionCommand extends BioCommand {
         long numImages = frame.getNumImages();
 
 
+
         for (int i = 0; i < numImages; i++) {
             if (frame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
                 rgb = frame.getImage(i);
                 break;
             }//if
         }//for
+
+
+        /*rgb is now the Image object that we’ve used in the video*/
+        Mat mat = new Mat();
+        if (rgb != null) {
+            Bitmap bm = Bitmap.createBitmap(rgb.getWidth(), rgb.getHeight(), Bitmap.Config.RGB_565);
+
+            Utils.bitmapToMat(bm, mat);
+        }
+
+        stackResult stackResult;
+        processor = new stackProcessor();
+        ImageProcessorResult imageProcessorResult = processor.process(0, mat, false);
+        stackResult = (stackResult) imageProcessorResult.getResult();
+
+        grabber = FtcRobotControllerActivity.frameGrabber;
+        grabber.setImageProcessor(new stoneProcessor());
     }
 
     @Override
@@ -102,21 +125,62 @@ public class VisionCommand extends BioCommand {
     }
 
     public void stackVision() {
-        processVuforia();
-        stackX = stackResult.xCoord;
-        stackWid = stackResult.width;
+        try {
+            frame = locale.getFrameQueue().take();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Image rgb = null;
 
-        if (stackX > 98) {
+        long numImages = frame.getNumImages();
+
+        for (int i = 0; i < numImages; i++) {
+            if (frame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
+                rgb = frame.getImage(i);
+                break;
+            }//if
+        }//for
+
+        /*rgb is now the Image object that we’ve used in the video*/
+
+        mat = new Mat();
+        if (rgb != null) {
+            Bitmap bm = Bitmap.createBitmap(rgb.getWidth(), rgb.getHeight(), Bitmap.Config.RGB_565);
+            bm.copyPixelsFromBuffer(rgb.getPixels());
+
+            Utils.bitmapToMat(bm, mat);
+        }
+
+        stackProcessor processor = new stackProcessor();
+
+        stackResult result;
+        ImageProcessorResult imageProcessorResult = processor.process(0, mat, false);
+        result = (stackResult) imageProcessorResult.getResult();
+
+
+
+        stackX = result.xCoord;
+        stackWid = result.width;
+
+        if (stackX > 420) {
+            op.telemetry.addData("Off right", "");
             stackStatus = VisionCommand.stackStatus.OFFRIGHT;
-        } else if (stackX < 78) {
+        } else if (stackX < 380) {
+            op.telemetry.addData("Off left", "");
             stackStatus = VisionCommand.stackStatus.OFFLEFT;
         } else {
-            if (stackWid > 70) {
+            if (stackWid > 500) {
+                op.telemetry.addData("done", "");
                 stackStatus = VisionCommand.stackStatus.DONE;
             } else {
+                op.telemetry.addData("Advacne", "");
                 stackStatus = VisionCommand.stackStatus.ADVANCE;
             }
         }
+
+        op.telemetry.addData("Width", stackWid);
+        op.telemetry.addData("X-val", stackX);
+        op.telemetry.update();
     }
 
     public void intakeVision() {
@@ -153,7 +217,7 @@ public class VisionCommand extends BioCommand {
     public void processVuforia() {
         /*To access the image: you need to iterate through the images of the frame object:*/
 
-        VuforiaLocalizer.CloseableFrame frame = null; //takes the frame at the head of the queue
+        //VuforiaLocalizer.CloseableFrame frame = null; //takes the frame at the head of the queue
         try {
             frame = locale.getFrameQueue().take();
         } catch (InterruptedException e) {
@@ -180,7 +244,7 @@ public class VisionCommand extends BioCommand {
         }
 
         ImageProcessorResult imageProcessorResult = processor.process(0, mat, false);
-        stackResult = (stackResult) imageProcessorResult.getResult();
+        //stackResult = (stackResult) imageProcessorResult.getResult();
     }
 
     @Override

@@ -52,13 +52,13 @@ public class MechCommand extends BioCommand {
 
     @Override
     public void loop() {
-        intake();
-        if (driver.b) {
-            autoStack();
+
+        cairrage();
+        //intake();
+        if (driver.a) {
+            //autoStack();
         }
-
         hooker();
-
     }
 
     public void autoStack() {
@@ -71,6 +71,15 @@ public class MechCommand extends BioCommand {
             gripper.setPosition(0);
 
         }
+    }
+
+    public void cairrage() {
+        if (manip.x) {
+            RobotMap.gripper.setPosition(0.7);
+        } else {
+            RobotMap.gripper.setPosition(0.35);
+        }
+
     }
 
     public void intake() {
@@ -88,25 +97,21 @@ public class MechCommand extends BioCommand {
         if (VisionCommand.status == TILTRIGHT) {
             Log.e(TAG, "Off course! Tilted to the right!");
             intLeft.setPower(1);
-            intRight.setPower(0.5);
+            intRight.setPower(0.8);
         }
         if (VisionCommand.status == TILTLEFT) {
             Log.e(TAG, "Off course! Tilted to the left!");
-            intLeft.setPower(0.5);
+            intLeft.setPower(0.8);
             intRight.setPower(1);
         }
     }
 
-    public void hooker (){
-
-        if (driver.dpad_down) {
+    public void hooker() {
+        if (manip.y) {
+            hooker.setPosition(0.5);
+        } else {
             hooker.setPosition(1);
         }
-
-        if (driver.dpad_up) {
-            hooker.setPosition(0);
-        }
-
     }
 
     @Override

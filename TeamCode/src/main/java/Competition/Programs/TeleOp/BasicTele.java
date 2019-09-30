@@ -3,6 +3,7 @@ package Competition.Programs.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import Competition.Commands.DriveCommand;
+import Competition.Commands.MechCommand;
 import Competition.Commands.VisionCommand;
 import Competition.Robot;
 import Competition.RobotMap;
@@ -13,6 +14,7 @@ public class BasicTele extends BiohazardTele {
 
     DriveCommand drive;
     VisionCommand vision;
+    MechCommand mech;
 
     @Override
     public void initHardware() {
@@ -22,9 +24,11 @@ public class BasicTele extends BiohazardTele {
 
         drive = new DriveCommand(this);
         vision = new VisionCommand(this);
+        mech = new MechCommand(this);
 
         drive.enable();
         vision.enable();
+        mech.enable();
     }
 
     @Override
