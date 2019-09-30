@@ -4,6 +4,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -81,6 +82,11 @@ public class stackProcessor implements ImageProcessor<stackResult> {
 
         Rect maxRect = null;
         double maxArea = -1;
+
+        Imgproc.line(rgbaFrame, new Point(380, rgbaFrame.height()), new Point(380, 0), new Scalar(0, 255, 0), 10);
+        Imgproc.line(rgbaFrame, new Point(420, rgbaFrame.height()), new Point(420, 0), new Scalar(0, 255, 0), 10);
+
+
         for (MatOfPoint contour : contours) {
             Rect rect = Imgproc.boundingRect(contour);
             Imgproc.rectangle(rgbaFrame, rect.bl(), rect.tr(), new Scalar(255, 255, 255), 3);

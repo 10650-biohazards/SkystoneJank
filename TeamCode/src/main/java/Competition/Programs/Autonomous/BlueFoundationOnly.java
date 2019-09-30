@@ -45,7 +45,9 @@ public class BlueFoundationOnly extends ExplosiveAuto {
 
     @Override
     public void body() throws InterruptedException {
-        drive.moveStrafePID(-6000, 5000);
+        drive.moveStraightPID(1000);
+
+        /*drive.moveStrafePID(-6000, 5000);
         hooker.hook();
         u.waitMS(1000);
         drive.moveStrafePID(8000, 5000);
@@ -55,7 +57,7 @@ public class BlueFoundationOnly extends ExplosiveAuto {
         drive.moveStraightPID(3000);
         drive.moveTurnPID(270);
         drive.moveStraightPID(4000);
-        drive.moveStraightPID(-3000);
+        drive.moveStraightPID(-3000);*/
     }
 
     @Override

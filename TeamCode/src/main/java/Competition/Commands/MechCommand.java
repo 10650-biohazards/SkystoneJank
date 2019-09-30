@@ -52,9 +52,11 @@ public class MechCommand extends BioCommand {
 
     @Override
     public void loop() {
-        intake();
+
+        cairrage();
+        //intake();
         if (driver.a) {
-            autoStack();
+            //autoStack();
         }
         hooker();
     }
@@ -69,6 +71,15 @@ public class MechCommand extends BioCommand {
             gripper.setPosition(0);
 
         }
+    }
+
+    public void cairrage() {
+        if (manip.x) {
+            RobotMap.gripper.setPosition(0.7);
+        } else {
+            RobotMap.gripper.setPosition(0.35);
+        }
+
     }
 
     public void intake() {

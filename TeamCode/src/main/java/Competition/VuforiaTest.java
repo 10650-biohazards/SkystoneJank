@@ -82,9 +82,8 @@ public class VuforiaTest extends OpMode {
             Utils.bitmapToMat(bm, mat);
         }
 
-        skyProcessor processor = new skyProcessor();
-
         skyResult result;
+        skyProcessor processor = new skyProcessor();
         ImageProcessorResult imageProcessorResult = processor.process(0, mat, false);
         result = (skyResult) imageProcessorResult.getResult();
 

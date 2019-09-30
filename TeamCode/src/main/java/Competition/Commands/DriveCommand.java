@@ -25,6 +25,8 @@ public class DriveCommand extends BioCommand {
 
     PID turnPID = new PID();
 
+    boolean first = true;
+
 
     BiohazardTele op;
     private float sidePower, straightPower, turnPower, frightPower, brightPower, fleftPower, bleftPower;
@@ -81,19 +83,29 @@ public class DriveCommand extends BioCommand {
     @Override
     public void loop() {
 
-        if (driver.b) {
+        if (driver.a) {
+            if (first) {
+                first = false;
+                u.waitMS(100);
+            }
+            autoStack();
+        } else {
+            first = true;
+        }
+
+
 
             buffer = System.currentTimeMillis() > resetTime + 200;
 
             if (isFieldOrientedControl) {
                 ToxinFieldBasedControl.Point leftStick = ToxinFieldBasedControl.getLeftJoystick(driver, gyro);
-                sidePower = (float) leftStick.x;
-                straightPower = (float) leftStick.y;
-                turnPower = driver.right_stick_x;
+                sidePower = -(float) leftStick.x;
+                straightPower = -(float) leftStick.y;
+                turnPower = -driver.right_stick_x;
             } else {
-                sidePower = driver.left_stick_x;
-                straightPower = driver.left_stick_y;
-                turnPower = driver.right_stick_x;
+                sidePower = -driver.left_stick_x;
+                straightPower = -driver.left_stick_y;
+                turnPower = -driver.right_stick_x;
             }
 
             if (driver.x && buffer && !slowPower) {
@@ -110,13 +122,13 @@ public class DriveCommand extends BioCommand {
 
             }
 
-            if (driver.a && buffer && !isFieldOrientedControl) {
+            if (driver.y && buffer && !isFieldOrientedControl) {
                 isFieldOrientedControl = true;
                 resetTime = System.currentTimeMillis();
                 buffer = false;
             }
 
-            if (driver.a && buffer && isFieldOrientedControl) {
+            if (driver.y && buffer && isFieldOrientedControl) {
 
                 isFieldOrientedControl = false;
                 resetTime = System.currentTimeMillis();
@@ -158,9 +170,9 @@ public class DriveCommand extends BioCommand {
                 fleft.setPower(0);
 
             }
-        }
 
-        op.telemetry.addData("left  y", Robot.driver.left_stick_y);
+
+        /*op.telemetry.addData("left  y", Robot.driver.left_stick_y);
         op.telemetry.addData("right y", Robot.driver.right_stick_y);
         op.telemetry.addData("Bright", bright.getCurrentPosition());
         op.telemetry.addData("Fright", fright.getCurrentPosition());
@@ -171,7 +183,7 @@ public class DriveCommand extends BioCommand {
         op.telemetry.addData("turn", turnPower);
         op.telemetry.addData("slow down", slowPower);
         op.telemetry.addData("Field Oriented", isFieldOrientedControl);
-        op.telemetry.update();
+        op.telemetry.update();*/
     }
 
 

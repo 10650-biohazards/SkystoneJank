@@ -31,7 +31,7 @@ public class RobotMap {
 
         gyro = new BiohazardNavX(hw, "navX", 0);
 
-        //stoneCam = hw.get(WebcamName.class, "stoned cam");
+        stoneCam = hw.get(WebcamName.class, "stoned cam");
 
         gripper = hw.get(Servo.class, "firm grasp");
         swinger = hw.get(Servo.class, "ragtime");

@@ -49,12 +49,19 @@ public class DriveSubsystem extends BioSubsystem {
 
     public void moveStraightPID(double targDist, int stopTime) {
         PID movePID = new PID();
-        movePID.setup(0.0002, 0, 0, 0.2, 20,bright.getCurrentPosition() + targDist);
+        double target = bright.getCurrentPosition() + targDist;
+        movePID.setup(0.0002, 0, 0, 0.2, 20, target);
 
         u.startTimer(stopTime);
 
         while (!u.timerDone() && !movePID.done()) {
             double power = movePID.status(bright.getCurrentPosition());
+
+            op.telemetry.addData("POWER", power);
+            op.telemetry.addData("Currpos", bright.getCurrentPosition());
+            op.telemetry.addData("Target", target);
+            op.telemetry.update();
+
             setPows(power, power, power, power);
 
             track.refresh();
