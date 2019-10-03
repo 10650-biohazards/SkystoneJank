@@ -20,14 +20,14 @@ public class RobotMap {
         fright  = hw.get(DcMotor.class, "fright");
         bleft   = hw.get(DcMotor.class, "bleft");
         fleft   = hw.get(DcMotor.class, "fleft");
-        lift    = hw.get(DcMotor.class, "lift");
-        rotator = hw.get(DcMotor.class, "rotator");
+        //lift    = hw.get(DcMotor.class, "lift");
+        //rotator = hw.get(DcMotor.class, "rotator");
 
         bright.setDirection(DcMotorSimple.Direction.REVERSE);
         fright.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        intLeft = hw.get(DcMotor.class, "intLeft");
-        intRight = hw.get(DcMotor.class, "intRight");
+        //intLeft = hw.get(DcMotor.class, "intLeft");
+        //intRight = hw.get(DcMotor.class, "intRight");
 
         gyro = new BiohazardNavX(hw, "navX", 0);
 

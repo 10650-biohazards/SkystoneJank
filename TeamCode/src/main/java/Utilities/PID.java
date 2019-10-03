@@ -2,9 +2,9 @@ package Utilities;
 
 public class PID {
 
-    private double P, I, D, bias, tol, tarVal, t = 0, initD, targetE, startTime, initE, timeElapsed, fullPowSecs, det;
+    public double P, I, D, bias, tol, tarVal, t = 0, initD, targetE, startTime, initE, timeElapsed, fullPowSecs, det;
     public double e;
-    private double integral = 0, oldE, oldTime = System.currentTimeMillis();
+    public double integral = 0, oldE, oldTime = System.currentTimeMillis();
     private final double SECS_PER_DEG = 42;
     private boolean turn, fullPow = false;
 

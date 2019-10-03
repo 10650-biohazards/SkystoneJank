@@ -11,7 +11,6 @@ public class Arnold_Tele_Demo extends OpMode {
 
     double  rightPow,
             leftPow,
-            strafePow,
             curr_arm_pos,
             curr_arm_speed,
             target_diff,
@@ -29,7 +28,7 @@ public class Arnold_Tele_Demo extends OpMode {
 
     private double MIN_ENCODER_TARGET = -1350,
                       MAX_ENCODER_TARGET = -60,
-                      ARM_ENCODER_TARGET_CHANGE_SPEED = 7;
+                      ARM_ENCODER_TARGET_CHANGE_SPEED = 10;
 
     final double SENSITIVITY = 0.75;
 
@@ -39,11 +38,8 @@ public class Arnold_Tele_Demo extends OpMode {
     }
 
     private void set_pows() {
-        h.rightMotor.setPower(rightPow);
         h.rightBackMotor.setPower(rightPow);
-        h.leftMotor.setPower(leftPow);
         h.leftBackMotor.setPower(leftPow);
-        h.strafeMotor.setPower(strafePow);
     }
 
     public void start() {
@@ -53,8 +49,8 @@ public class Arnold_Tele_Demo extends OpMode {
     public void control_motors() {
 
         if (Math.abs(gamepad1.left_stick_y) > 0.05) {
-            leftPow = -gamepad1.left_stick_y * SENSITIVITY;
-            rightPow = -gamepad1.left_stick_y * SENSITIVITY;
+            leftPow = gamepad1.left_stick_y * SENSITIVITY;
+            rightPow = gamepad1.left_stick_y * SENSITIVITY;
         } else {
             leftPow = 0;
             rightPow = 0;
@@ -76,10 +72,10 @@ public class Arnold_Tele_Demo extends OpMode {
     }
 
     private void set_servos() {
-        h.jewelServo.setPosition(0.0);
-        if (gamepad1.dpad_left) {
-            h.gripperServo.setPosition(0.40);
-        } else if (gamepad1.dpad_right) {
+        h.jewelServo.setPosition(0.1);
+        if (gamepad2.dpad_left) {
+            h.gripperServo.setPosition(0.45);
+        } else if (gamepad2.dpad_right) {
             h.gripperServo.setPosition(0.25);
         }
     }
