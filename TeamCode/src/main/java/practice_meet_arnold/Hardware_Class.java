@@ -29,7 +29,7 @@ public class Hardware_Class {
     public void init(HardwareMap ahwMap) {
         hwMap = ahwMap;
 
-        strafeMotor     = get_DC_motor("middle");
+        //strafeMotor     = get_DC_motor("middle");
         rightMotor      = get_DC_motor("right");
         rightBackMotor  = get_DC_motor("rightB");
         leftMotor       = get_DC_motor("left");

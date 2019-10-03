@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import Utilities.PID;
+
 import Competition.Robot;
 import Competition.RobotMap;
 import FtcExplosivesPackage.BioCommand;
@@ -17,13 +19,19 @@ import static Competition.Commands.VisionCommand.stoneStatus.TILTLEFT;
 import static Competition.Commands.VisionCommand.stoneStatus.TILTRIGHT;
 
 
+
+
 public class MechCommand extends BioCommand {
 
     String TAG = "MechCommand";
 
-    DcMotor intRight, intLeft;
+    DcMotor intRight, intLeft, lift;
 
     Servo swinger, gripper, hooker;
+
+    PID liftPID;
+
+    private double liftPos;
 
     private Gamepad manip, driver;
 
@@ -39,9 +47,13 @@ public class MechCommand extends BioCommand {
         swinger = RobotMap.swinger;
         gripper = RobotMap.gripper;
         hooker = RobotMap.hooker;
+        lift = RobotMap.lift;
 
         manip = Robot.manipulator;
         driver = Robot.driver;
+
+        liftPos = lift.getCurrentPosition();
+        liftPID.setup (42,0,42,0,0,liftPos);
     }
 
     @Override
@@ -112,6 +124,20 @@ public class MechCommand extends BioCommand {
         } else {
             hooker.setPosition(1);
         }
+    }
+
+    public void lift() {
+
+        if(manip.right_stick_y > 0.05 || manip.right_stick_y < -0.05)
+        {
+
+            liftPos -= manip.right_stick_y;
+            liftPID.adjTarg(liftPos);
+
+        }
+
+        lift.setPower(liftPID.status(lift.getCurrentPosition()));
+
     }
 
     @Override
