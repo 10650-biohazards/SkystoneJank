@@ -149,23 +149,23 @@ public class DriveCommand extends BioCommand {
 
             //finds the greatest number than finds the scale factor to make that equal to one.
             float scaleAdjust = ScaleAdjustment(frightPower, brightPower, bleftPower, fleftPower, 1);
+            brightPower *= scaleAdjust;
             frightPower *= scaleAdjust;
-            brightPower *= scaleAdjust;
+            bleftPower *= scaleAdjust;
             fleftPower *= scaleAdjust;
-            brightPower *= scaleAdjust;
 
             //deadband system is set to 0.05
             if (Math.abs(straightPower) > DEADBAND || Math.abs(sidePower) > DEADBAND || Math.abs(turnPower) > DEADBAND) {
 
-                fright.setPower(frightPower);
-                bright.setPower(brightPower);
+                bright.setPower(frightPower);
+                fright.setPower(brightPower);
                 bleft.setPower(bleftPower);
                 fleft.setPower(fleftPower);
 
             } else {
 
-                fright.setPower(0);
                 bright.setPower(0);
+                fright.setPower(0);
                 bleft.setPower(0);
                 fleft.setPower(0);
 

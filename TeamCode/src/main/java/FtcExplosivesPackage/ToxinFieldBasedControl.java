@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  *   Created by Aidan 9/14/19
  */
 
-public class ToxinFieldBasedControl {
+public class ToxinFieldBasedControl{
 
 
     public static class Point{
