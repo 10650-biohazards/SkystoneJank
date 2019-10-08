@@ -63,8 +63,8 @@ public class Arnold_Tele_Demo extends OpMode {
         //}
 
         if (Math.abs(gamepad1.right_stick_x) > 0.05) {
-            leftPow += gamepad1.right_stick_x * SENSITIVITY;
-            rightPow -= gamepad1.right_stick_x * SENSITIVITY;
+            leftPow -= gamepad1.right_stick_x * SENSITIVITY;
+            rightPow += gamepad1.right_stick_x * SENSITIVITY;
         }
 
         telemetry.addData("left", leftPow);

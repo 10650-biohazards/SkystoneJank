@@ -3,6 +3,8 @@ package Competition.Commands;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import Competition.PracticeMap;
+import Competition.PracticeRobot;
 import Competition.Robot;
 import Competition.RobotMap;
 import Competition.Subsystems.DriveSubsystem;
@@ -26,6 +28,8 @@ public class DriveCommand extends BioCommand {
     PID turnPID = new PID();
 
     boolean first = true;
+
+    double startTime;
 
 
     BiohazardTele op;
@@ -77,7 +81,7 @@ public class DriveCommand extends BioCommand {
 
     @Override
     public void start() {
-
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -88,7 +92,7 @@ public class DriveCommand extends BioCommand {
                 first = false;
                 u.waitMS(100);
             }
-            autoStack();
+            //autoStack();
         } else {
             first = true;
         }
@@ -122,7 +126,7 @@ public class DriveCommand extends BioCommand {
 
             }
 
-            if (driver.y && buffer && !isFieldOrientedControl) {
+            /*if (driver.y && buffer && !isFieldOrientedControl) {
                 isFieldOrientedControl = true;
                 resetTime = System.currentTimeMillis();
                 buffer = false;
@@ -134,7 +138,7 @@ public class DriveCommand extends BioCommand {
                 resetTime = System.currentTimeMillis();
                 buffer = false;
 
-            }
+            }*/
 
             if (slowPower) {
                 sidePower /= 2;
@@ -149,31 +153,35 @@ public class DriveCommand extends BioCommand {
 
             //finds the greatest number than finds the scale factor to make that equal to one.
             float scaleAdjust = ScaleAdjustment(frightPower, brightPower, bleftPower, fleftPower, 1);
-            brightPower *= scaleAdjust;
             frightPower *= scaleAdjust;
-            bleftPower *= scaleAdjust;
+            brightPower *= scaleAdjust;
             fleftPower *= scaleAdjust;
+            brightPower *= scaleAdjust;
 
             //deadband system is set to 0.05
-            if (Math.abs(straightPower) > DEADBAND || Math.abs(sidePower) > DEADBAND || Math.abs(turnPower) > DEADBAND) {
+            //if (Math.abs(straightPower) > DEADBAND || Math.abs(sidePower) > DEADBAND || Math.abs(turnPower) > DEADBAND) {
 
-                bright.setPower(frightPower);
-                fright.setPower(brightPower);
+                fright.setPower(frightPower);
+                bright.setPower(brightPower);
                 bleft.setPower(bleftPower);
                 fleft.setPower(fleftPower);
 
-            } else {
+            //} else {
 
-                bright.setPower(0);
-                fright.setPower(0);
-                bleft.setPower(0);
-                fleft.setPower(0);
+                //fright.setPower(0);
+                //bright.setPower(0);
+                //bleft.setPower(0);
+                //fleft.setPower(0);
 
-            }
+            //}
+
+        double refreshTime = System.currentTimeMillis() - startTime;
+        startTime = System.currentTimeMillis();
 
 
-        /*op.telemetry.addData("left  y", Robot.driver.left_stick_y);
-        op.telemetry.addData("right y", Robot.driver.right_stick_y);
+
+        op.telemetry.addData("left  y", Robot.driver.left_stick_y);
+        op.telemetry.addData("right x", Robot.driver.right_stick_x);
         op.telemetry.addData("Bright", bright.getCurrentPosition());
         op.telemetry.addData("Fright", fright.getCurrentPosition());
         op.telemetry.addData("Bleft", bleft.getCurrentPosition());
@@ -183,7 +191,8 @@ public class DriveCommand extends BioCommand {
         op.telemetry.addData("turn", turnPower);
         op.telemetry.addData("slow down", slowPower);
         op.telemetry.addData("Field Oriented", isFieldOrientedControl);
-        op.telemetry.update();*/
+        op.telemetry.addData("Refresh Time", refreshTime);
+        op.telemetry.update();
     }
 
 

@@ -51,19 +51,19 @@ public class DriveSubsystem extends BioSubsystem {
         PID movePID = new PID();
         PID modPID = new PID();
 
-        double target = bright.getCurrentPosition() + targDist;
+        double target = -bright.getCurrentPosition() - targDist;
         double targAng = refine(gyro.getYaw());
 
         movePID.setup(0.00015, 0, 0, 0.2, 20, target);
-        modPID.setup(0.02, 0, 0, 0, 0, targAng);
+        //modPID.setup(0.02, 0, 0, 0, 0, targAng);
 
         u.startTimer(stopTime);
 
         while (!u.timerDone() && !movePID.done()) {
 
-            double mod = modPID.status(refine(gyro.getYaw()));
-            double power = movePID.status(bright.getCurrentPosition());
-            power = u.limit(1, -1, power);
+            //double mod = modPID.status(refine(gyro.getYaw()));
+            double mod = 0;
+            double power = -movePID.status(bright.getCurrentPosition());
 
             op.telemetry.addData("POWER", power);
             op.telemetry.addData("br", bright.getCurrentPosition());
@@ -72,9 +72,6 @@ public class DriveSubsystem extends BioSubsystem {
             op.telemetry.addData("fl", fleft.getCurrentPosition());
             op.telemetry.addData("Target", target);
             op.telemetry.addData("TargAng", targAng);
-            op.telemetry.addData("Modifier", mod);
-            op.telemetry.addData("P", (modPID.P * modPID.e));
-            op.telemetry.addData("I", (modPID.integral));
             op.telemetry.update();
 
             setPows(power - mod, power - mod, power + mod, power + mod);
@@ -142,7 +139,7 @@ public class DriveSubsystem extends BioSubsystem {
         }
 
         PID movePID = new PID();
-        movePID.setup(0.05, 0, 0, 0.07, 0.25,refine(targetAng + mod));
+        movePID.setup(0.005, 0, 0, 0.1, 0.25,refine(targetAng + mod));
 
         op.telemetry.addData("mod", mod);
         op.telemetry.addData("raw ang", gyro.getYaw());

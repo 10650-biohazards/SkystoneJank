@@ -19,8 +19,6 @@ import static Competition.Commands.VisionCommand.stoneStatus.TILTLEFT;
 import static Competition.Commands.VisionCommand.stoneStatus.TILTRIGHT;
 
 
-
-
 public class MechCommand extends BioCommand {
 
     String TAG = "MechCommand";
@@ -34,6 +32,13 @@ public class MechCommand extends BioCommand {
     private double liftPos;
 
     private Gamepad manip, driver;
+
+    int nextLevel = 0;
+    private final int BASE_HEIGHT = 42;
+    private final int TICKS_PER_LEVEL = 42;
+
+    double startTime;
+
 
     public MechCommand(BiohazardTele op) {
         super(op, "mech");
@@ -60,17 +65,20 @@ public class MechCommand extends BioCommand {
     public void start() {
         intLeft.setPower(0);
         intRight.setPower(0);
+
+        startTime = System.currentTimeMillis();
     }
 
     @Override
     public void loop() {
 
-        cairrage();
+        //cairrage();
         //intake();
         if (driver.a) {
             //autoStack();
         }
         hooker();
+        adjTargLevel();
     }
 
     public void autoStack() {
@@ -87,9 +95,9 @@ public class MechCommand extends BioCommand {
 
     public void cairrage() {
         if (manip.x) {
-            RobotMap.gripper.setPosition(0.7);
+            gripper.setPosition(0.7);
         } else {
-            RobotMap.gripper.setPosition(0.35);
+            gripper.setPosition(0.25);
         }
 
     }
@@ -124,6 +132,25 @@ public class MechCommand extends BioCommand {
         } else {
             hooker.setPosition(1);
         }
+    }
+
+    public void adjTargLevel() {
+
+        boolean buffer = startTime + 500 < System.currentTimeMillis();
+
+        if (manip.left_bumper && buffer) {
+            nextLevel++;
+            startTime = System.currentTimeMillis();
+        }
+
+        if (manip.left_trigger > 1 && buffer && nextLevel > 0) {
+            nextLevel--;
+            startTime = System.currentTimeMillis();
+        }
+    }
+
+    public int getTargHeight() {
+        return BASE_HEIGHT + (TICKS_PER_LEVEL * nextLevel);
     }
 
     public void lift() {
