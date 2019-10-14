@@ -17,7 +17,7 @@ import ftc.vision.Glyph.GlyphResult;
 import ftc.vision.ImageProcessorResult;
 import ftc.vision.judgeDay.trackResult;
 
-@TeleOp (name = "Top Secret")
+@TeleOp (name = "No")
 public class follow extends ExplosiveTele {
     String TAG = "stalker";
 
