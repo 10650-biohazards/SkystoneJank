@@ -3,6 +3,8 @@ package Competition.Programs.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import Competition.Robot;
 import Competition.RobotMap;
 import FtcExplosivesPackage.BiohazardTele;
@@ -43,6 +45,7 @@ public class tank extends BiohazardTele {
 
         telemetry.addData("Right y", gamepad1.right_stick_y);
         telemetry.addData("Left  y", gamepad1.left_stick_y);
+        telemetry.addData("Range", RobotMap.frontRange.getDistance(DistanceUnit.INCH));
         telemetry.update();
     }
 

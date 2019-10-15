@@ -23,20 +23,26 @@ public class MechCommand extends BioCommand {
 
     String TAG = "MechCommand";
 
-    DcMotor intRight, intLeft, lift;
+    DcMotor intRight, intLeft, lift, rotator;
 
     Servo swinger, gripper, hooker;
 
-    PID liftPID;
-
-    private double liftPos;
-
     private Gamepad manip, driver;
 
+
+    //ROTATION STUFF
+    private final int VERTICAL = 42;
+    private final int RELOAD = 42;
+    private int rotationTarg;
+    private PID rotPID = new PID();
+
+    //LIFT STUFF
     int nextLevel = 0;
     private final int BASE_HEIGHT = 42;
     private final int TICKS_PER_LEVEL = 42;
-
+    private final int RELOAD_HEIGHT = 42;
+    PID liftPID;
+    int lifttarg;
     double startTime;
 
 
@@ -46,6 +52,8 @@ public class MechCommand extends BioCommand {
 
     @Override
     public void init() {
+        liftPID = new PID();
+
         intRight = RobotMap.intRight;
         intLeft = RobotMap.intLeft;
 
@@ -53,12 +61,15 @@ public class MechCommand extends BioCommand {
         gripper = RobotMap.gripper;
         hooker = RobotMap.hooker;
         lift = RobotMap.lift;
+        rotator = RobotMap.rotator;
 
         manip = Robot.manipulator;
         driver = Robot.driver;
 
-        liftPos = lift.getCurrentPosition();
-        liftPID.setup (42,0,42,0,0,liftPos);
+        lifttarg = lift.getCurrentPosition();
+        rotationTarg = rotator.getCurrentPosition();
+        liftPID.setup (42,0,42,0,0,lifttarg);
+        rotPID.setup(42, 0, 42, 0, 0, rotationTarg);
     }
 
     @Override
@@ -72,34 +83,50 @@ public class MechCommand extends BioCommand {
     @Override
     public void loop() {
 
-        //cairrage();
+        cairrage();
         //intake();
         if (driver.a) {
-            //autoStack();
+            // autoStack();
         }
         hooker();
+
         adjTargLevel();
+        moveLift();
+        //updateLift();
+
+        moveRotation();
+        //updateRotation();
     }
 
     public void autoStack() {
-        double stackX = VisionCommand.stackX;
-        int width  = VisionCommand.stackWid;
 
-        if (stackX > 93 && stackX < 83 && width < 42) {
-            gripper.setPosition(1.0);
-        } else {
-            gripper.setPosition(0);
+        boolean done = false;
+        lifttarg = getTargHeight();
 
+        while (!done && !driver.b) {
+            if (VisionCommand.stackStatus == VisionCommand.stackStatus.DONE) {
+                gripper.setPosition(0.7);
+                done = true;
+            } else {
+                gripper.setPosition(0.3);
+            }
+            updateLift();
+            updateRotation();
         }
     }
 
     public void cairrage() {
         if (manip.x) {
-            gripper.setPosition(0.7);
+            gripper.setPosition(0.3);
         } else {
-            gripper.setPosition(0.25);
+            gripper.setPosition(0.7);
         }
 
+        if (manip.b) {
+            swinger.setPosition(0.35);
+        } else {
+            swinger.setPosition(0.05);
+        }
     }
 
     public void intake() {
@@ -143,28 +170,49 @@ public class MechCommand extends BioCommand {
             startTime = System.currentTimeMillis();
         }
 
-        if (manip.left_trigger > 1 && buffer && nextLevel > 0) {
+        if (manip.left_trigger > 0.05 && buffer && nextLevel > 0) {
             nextLevel--;
             startTime = System.currentTimeMillis();
         }
+
+        Log.e(TAG, "Position: " + nextLevel);
+        Log.e(TAG, "Buffer: " + buffer);
     }
 
     public int getTargHeight() {
         return BASE_HEIGHT + (TICKS_PER_LEVEL * nextLevel);
     }
 
-    public void lift() {
-
-        if(manip.right_stick_y > 0.05 || manip.right_stick_y < -0.05)
-        {
-
-            liftPos -= manip.right_stick_y;
-            liftPID.adjTarg(liftPos);
-
+    public void moveLift() {
+        if (manip.dpad_up || manip.right_stick_y < 0.05) {
+            lifttarg = getTargHeight();
         }
+        if (manip.dpad_up || manip.right_stick_y > 0.05) {
+            lifttarg = RELOAD_HEIGHT;
+        }
+    }
+
+    public void updateLift() {
+
+        liftPID.adjTarg(lifttarg);
 
         lift.setPower(liftPID.status(lift.getCurrentPosition()));
 
+    }
+
+    public void moveRotation() {
+        if (manip.right_trigger > 0.05 || manip.dpad_down) {
+            rotationTarg = RELOAD;
+        }
+        if (manip.right_bumper || manip.dpad_up) {
+            rotationTarg = VERTICAL;
+        }
+    }
+
+    public void updateRotation() {
+        rotPID.adjTarg(rotationTarg);
+
+        rotator.setPower(rotPID.status(rotator.getCurrentPosition()));
     }
 
     @Override

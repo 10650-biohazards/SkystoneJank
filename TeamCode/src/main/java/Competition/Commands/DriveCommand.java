@@ -197,40 +197,47 @@ public class DriveCommand extends BioCommand {
 
 
     private void autoStack() {
-        double stackX = VisionCommand.stackX;
-        int width = VisionCommand.stackWid;
-        double brp, frp, blp, flp;
+        boolean done = false;
 
-        if (stackX > 98) {
-            brp = -1;
-            frp = 1;
-            blp = 1;
-            flp = -1;
-        } else if (stackX < 78) {
-            brp = 1;
-            frp = -1;
-            blp = -1;
-            flp = 1;
-        } else {
-            if (width > 70) {
-                brp = 0;
-                frp = 0;
-                blp = 0;
-                flp = 0;
+
+        while (!done) {
+            double stackX = VisionCommand.stackX;
+            int width = VisionCommand.stackWid;
+            double brp, frp, blp, flp;
+
+            if (VisionCommand.stackStatus == VisionCommand.stackStatus.OFFRIGHT) {
+                brp = -1;
+                frp = 1;
+                blp = 1;
+                flp = -1;
+            } else if (VisionCommand.stackStatus == VisionCommand.stackStatus.OFFLEFT) {
+                brp = 1;
+                frp = -1;
+                blp = -1;
+                flp = 1;
             } else {
-                brp = -0.3;
-                frp = -0.3;
-                blp = -0.3;
-                flp = -0.3;
+                if (VisionCommand.stackStatus == VisionCommand.stackStatus.DONE) {
+                    done = true;
+                    brp = 0;
+                    frp = 0;
+                    blp = 0;
+                    flp = 0;
+                } else {
+                    brp = -0.3;
+                    frp = -0.3;
+                    blp = -0.3;
+                    flp = -0.3;
+                }
             }
-        }
 
-        double mod = 0;
-        if (Math.abs(stackX - 88) < 40) {
-            mod = turnPID.status(gyro.getYaw());
-        }
+            double mod = 0;
+            if (Math.abs(stackX - 400) < 100) {
+                mod = turnPID.status(gyro.getYaw());
+            }
 
-        setPows(brp + mod, frp + mod, blp - mod, flp - mod);
+            setPows(brp + mod, frp + mod, blp - mod, flp - mod);
+        }
+        setPows(0, 0, 0, 0);
     }
 
     private void setPows(double brp, double frp, double blp, double flp) {

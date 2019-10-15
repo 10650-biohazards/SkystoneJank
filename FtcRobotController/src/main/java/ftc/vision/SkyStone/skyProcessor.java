@@ -26,13 +26,28 @@ public class skyProcessor implements ImageProcessor<skyResult> {
     @Override
     public ImageProcessorResult<skyResult> process(long startTime, Mat rgbaFrame, boolean saveImages) {
 
-        int yMax = 140, yMin = 194;
-        int startX = 0, stoneWidth = 170, buffer = 60;
 
+
+        //THIS GOOD FOR PHONE
+        int xMax = 105, xMin = 100;
+        int startY = 0, stoneWidth = 40, buffer = 5;
+
+        //HEY, THIS GOOD FOR WEBCAM
+        //int yMax = 140, yMin = 194;
+        //int startX = 0, stoneWidth = 170, buffer = 60;
+
+
+        //Slots for phone
         ArrayList<Rect> slots = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            slots.add(new Rect(new Point(startX + (stoneWidth * i) + buffer, yMax), new Point(startX + (stoneWidth * (i + 1)) - buffer, yMin)));
+            slots.add(new Rect(new Point(xMax, startY + (stoneWidth * i) + buffer), new Point(xMin, startY + (stoneWidth * (i + 1)) - buffer)));
         }
+
+        //Slots for webcam
+        //ArrayList<Rect> slots = new ArrayList<>();
+        //for (int i = 0; i < 3; i++) {
+        //    slots.add(new Rect(new Point(startX + (stoneWidth * i) + buffer, yMax), new Point(startX + (stoneWidth * (i + 1)) - buffer, yMin)));
+        //}
 
 
         Point location;
@@ -42,13 +57,21 @@ public class skyProcessor implements ImageProcessor<skyResult> {
             ImageUtil.saveImage(TAG, rgbaFrame, Imgproc.COLOR_RGBA2BGR, "0_camera", startTime);
         }
 
-        //convert to hsv
+        //convert to hsv for phone
         Mat hsv = new Mat();
-        Imgproc.line(rgbaFrame, new Point(startX + stoneWidth,0 ), new Point(startX + stoneWidth, rgbaFrame.height()), new Scalar(0, 0, 0), 70);
-        Imgproc.line(rgbaFrame, new Point(startX + (stoneWidth * 2),0 ), new Point(startX + (stoneWidth * 2), rgbaFrame.height()), new Scalar(0, 0, 0), 70);
-        Imgproc.line(rgbaFrame, new Point(startX + (stoneWidth * 3),0 ), new Point(startX + (stoneWidth * 3), rgbaFrame.height()), new Scalar(0, 0, 0), 70);
-        Imgproc.rectangle(rgbaFrame, new Point(0,yMin + 10), new Point(rgbaFrame.width(), yMin + 20), new Scalar(0, 0, 0), -1);
+        Imgproc.line(rgbaFrame, new Point(0, startY + stoneWidth ), new Point(rgbaFrame.width(), startY + stoneWidth), new Scalar(0, 0, 0), 10);
+        Imgproc.line(rgbaFrame, new Point(0, startY + (stoneWidth * 2)), new Point(rgbaFrame.width(), startY + (stoneWidth * 2)), new Scalar(0, 0, 0), 10);
+        Imgproc.line(rgbaFrame, new Point(0, startY + (stoneWidth * 3)), new Point(rgbaFrame.width(), startY + (stoneWidth * 3)), new Scalar(0, 0, 0), 10);
+        Imgproc.rectangle(rgbaFrame, new Point(xMin + 5, 0), new Point(xMin - 5, rgbaFrame.height()), new Scalar(0, 0, 0), -1);
         Imgproc.cvtColor(rgbaFrame, hsv, Imgproc.COLOR_RGB2HSV);
+
+        //convert to hsv for webcam
+        //Mat hsv = new Mat();
+        //Imgproc.line(rgbaFrame, new Point(startX + stoneWidth,0 ), new Point(startX + stoneWidth, rgbaFrame.height()), new Scalar(0, 0, 0), 70);
+        //Imgproc.line(rgbaFrame, new Point(startX + (stoneWidth * 2),0 ), new Point(startX + (stoneWidth * 2), rgbaFrame.height()), new Scalar(0, 0, 0), 70);
+        //Imgproc.line(rgbaFrame, new Point(startX + (stoneWidth * 3),0 ), new Point(startX + (stoneWidth * 3), rgbaFrame.height()), new Scalar(0, 0, 0), 70);
+        //Imgproc.rectangle(rgbaFrame, new Point(0,yMin + 10), new Point(rgbaFrame.width(), yMin + 20), new Scalar(0, 0, 0), -1);
+        //Imgproc.cvtColor(rgbaFrame, hsv, Imgproc.COLOR_RGB2HSV);
 
         //h range is 0-179
         //s range is 0-255
@@ -112,9 +135,18 @@ public class skyProcessor implements ImageProcessor<skyResult> {
         ArrayList<Rect> stones = new ArrayList<>();
         for (MatOfPoint currCont : contours) {
             Rect rect = Imgproc.boundingRect(currCont);
-            if (rect.area() > 200) {
+
+            Point topRight = new Point(rect.mid().x + ((double)rect.width / 4), rect.mid().y - ((double)rect.width / 4));
+            Point botRight = new Point(rect.mid().x + ((double)rect.width / 4), rect.mid().y + ((double)rect.width / 4));
+            Point topLeft = new Point(rect.mid().x - ((double)rect.width / 4), rect.mid().y - ((double)rect.width / 4));
+            Point botLeft = new Point(rect.mid().x - ((double)rect.width / 4), rect.mid().y + ((double)rect.width / 4));
+            if (rect.area() > 200
+                    && rgbaFrame.get((int)topRight.y, (int)topRight.x)[0] == 255
+                    && rgbaFrame.get((int)botRight.y, (int)botRight.x)[0] == 255
+                    && rgbaFrame.get((int)topLeft.y, (int)topLeft.x)[0] == 255
+                    && rgbaFrame.get((int)botLeft.y, (int)botLeft.x)[0] == 255) {
                 Imgproc.rectangle(rgbaFrame, rect.bl(), rect.tr(), new Scalar(0, 255, 0), 3);
-                Imgproc.rectangle(rgbaFrame, new Point(rect.mid().x + 2, rect.mid().y + 2), new Point(rect.mid().x - 2, rect.mid().y - 2), new Scalar(255, 255, 255), 3);
+                Imgproc.rectangle(rgbaFrame, new Point(rect.mid().x + 1, rect.mid().y + 1), new Point(rect.mid().x - 1, rect.mid().y - 1), new Scalar(255, 255, 255), 3);
                 stones.add(rect);
             }
         }

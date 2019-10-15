@@ -40,7 +40,7 @@ public class stackProcessor implements ImageProcessor<stackResult> {
         List<Scalar> hsvMin = new ArrayList<>();
         List<Scalar> hsvMax = new ArrayList<>();
 
-        hsvMin.add(new Scalar(10, 150, 100)); //yellow min
+        hsvMin.add(new Scalar(10, 100, 100)); //yellow min
         hsvMax.add(new Scalar(29, 255, 255)); //yellow max
 
         hsvMin.add(new Scalar(0, 0, 0)); //null min

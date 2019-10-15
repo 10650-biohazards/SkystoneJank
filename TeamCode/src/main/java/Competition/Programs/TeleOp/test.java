@@ -1,0 +1,21 @@
+package Competition.Programs.TeleOp;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+@TeleOp (name = "TEST")
+public class test extends OpMode {
+
+    DcMotor lift;
+
+    @Override
+    public void init() {
+        lift = hardwareMap.get(DcMotor.class, "lift");
+    }
+
+    @Override
+    public void loop() {
+        lift.setPower(gamepad1.left_stick_y);
+    }
+}

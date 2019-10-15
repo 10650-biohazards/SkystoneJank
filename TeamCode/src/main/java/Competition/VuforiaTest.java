@@ -145,6 +145,18 @@ public class VuforiaTest extends OpMode {
 
         telemetry.addData(result.toString(), "");
 
+        if (result.xCoord > 420) {
+            telemetry.addData("Off right", "");
+        } else if (result.xCoord < 380) {
+            telemetry.addData("Off left", "");
+        } else {
+            if (result.width > 500) {
+                telemetry.addData("done", "");
+            } else {
+                telemetry.addData("Advacne", "");
+            }
+        }
+
 
         /*
         int ticker = 0;

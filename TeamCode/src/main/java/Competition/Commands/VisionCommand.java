@@ -169,7 +169,7 @@ public class VisionCommand extends BioCommand {
             op.telemetry.addData("Off left", "");
             stackStatus = VisionCommand.stackStatus.OFFLEFT;
         } else {
-            if (stackWid > 500) {
+            if (stackWid > 300) {
                 op.telemetry.addData("done", "");
                 stackStatus = VisionCommand.stackStatus.DONE;
             } else {
