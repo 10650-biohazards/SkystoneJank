@@ -119,9 +119,14 @@ public class VisionCommand extends BioCommand {
     @Override
     public void loop() {
         intakeVision();
-        if (Robot.driver.a) {
+        //if (Robot.driver.a) {
             stackVision();
-        }
+        //}
+
+        op.telemetry.addData("StackX", stackX);
+        op.telemetry.addData("width", stackWid);
+        op.telemetry.addData("Intake", status);
+        op.telemetry.update();
     }
 
     public void stackVision() {
@@ -243,8 +248,9 @@ public class VisionCommand extends BioCommand {
             Utils.bitmapToMat(bm, mat);
         }
 
+        stackResult result;
         ImageProcessorResult imageProcessorResult = processor.process(0, mat, false);
-        //stackResult = (stackResult) imageProcessorResult.getResult();
+        result = (stackResult) imageProcessorResult.getResult();
     }
 
     @Override

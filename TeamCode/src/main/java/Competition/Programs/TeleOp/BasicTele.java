@@ -23,11 +23,11 @@ public class BasicTele extends BiohazardTele {
         robot.enable();
 
         drive = new DriveCommand(this);
-        //vision = new VisionCommand(this);
+        vision = new VisionCommand(this);
         mech = new MechCommand(this);
 
         drive.enable();
-        //vision.enable();
+        vision.enable();
         mech.enable();
     }
 

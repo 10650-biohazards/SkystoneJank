@@ -180,7 +180,7 @@ public class DriveCommand extends BioCommand {
 
 
 
-        op.telemetry.addData("left  y", Robot.driver.left_stick_y);
+        /*op.telemetry.addData("left  y", Robot.driver.left_stick_y);
         op.telemetry.addData("right x", Robot.driver.right_stick_x);
         op.telemetry.addData("Bright", bright.getCurrentPosition());
         op.telemetry.addData("Fright", fright.getCurrentPosition());
@@ -192,7 +192,7 @@ public class DriveCommand extends BioCommand {
         op.telemetry.addData("slow down", slowPower);
         op.telemetry.addData("Field Oriented", isFieldOrientedControl);
         op.telemetry.addData("Refresh Time", refreshTime);
-        op.telemetry.update();
+        op.telemetry.update();*/
     }
 
 

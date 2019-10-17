@@ -6,9 +6,7 @@ import Competition.Robot;
 import Competition.RobotMap;
 import Competition.Subsystems.DriveSubsystem;
 import Competition.Subsystems.HookSubsystem;
-import Competition.Subsystems.VisionSubsystem;
 import DubinsCurve.curveProcessor3;
-import DubinsCurve.myPoint;
 import FtcExplosivesPackage.ExplosiveAuto;
 import Utilities.Utility;
 
@@ -45,19 +43,24 @@ public class RedFoundationOnly extends ExplosiveAuto {
     @Override
     public void body() throws InterruptedException {
 
+        drive.moveRangePID(11, 5000, true);
 
-        drive.moveStrafePID(-6000, 5000);
+        /*
+        drive.moveStrafePow(-1, 500);
+        drive.moveTurnPID(90);
+        drive.moveStrafePow(-0.5, 300);
         hooker.hook();
         u.waitMS(1000);
-        drive.moveStrafePID(8000, 5000);
-        drive.moveTurnPID(90);
+        drive.moveStrafePow(1, 1800);
+        drive.moveTurnFound(90);
         hooker.release();
-        drive.moveStraightPID(-5500);
-        drive.moveTurnPID(350);
-        drive.moveStraightPID(3000);
+        drive.moveStraightPID(-1000);
+        drive.moveTurnPID(175);
+        drive.moveStraightPID(-400);
         drive.moveTurnPID(90);
-        drive.moveStraightPID(4000);
-        drive.moveStraightPID(-3000);
+        drive.moveStraightPID(1000);
+        drive.moveTurnPID(270);
+        drive.moveStraightPID(-1000);*/
     }
 
     @Override
